@@ -1,7 +1,5 @@
 import express from 'express'
-import cors from 'cors'
-import vitalsRouter from './routers/vitals-router'
-
+import vitalsRouter from './routers/vitalsRoute'
 
 const PORT = process.env.PORT || 4000
 
@@ -20,10 +18,7 @@ app.get('/', (req, res) => {
 	res.send('Hello world!')
 })
 
-
-
 app.use('/api', vitalsRouter)
-
 
 app.use((req, res) => {
 	res.status(404)
