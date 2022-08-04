@@ -1,31 +1,38 @@
-import { Request, Response, NextFunction } from 'express';
-import axios, { AxiosResponse } from 'axios';
-import vitalSign from "../models/vitalSigns";
+import { fhirclient } from 'fhirclient/lib/types';
+import { Resource, Observation, ServiceRequest } from '../fhir-types/fhir-r4';
+import Client from 'fhirclient/lib/Client';
 
-let baseServer: String = 'http://localhost:8081';
-let vitalsURL: String = '/vitals';
+
+const resourcesFrom = (response: fhirclient.JsonObject): Resource[] => {
+    const entries = (response[0] as fhirclient.JsonObject)?.entry as [fhirclient.JsonObject];
+    return entries?.map((entry: fhirclient.JsonObject) => entry.resource as any)
+                  .filter((resource: Resource) => resource.resourceType !== 'OperationOutcome');
+};
+
+const fhirOptions: fhirclient.FhirOptions = {
+    pageLimit: 0,
+};
 
 // getting all Vitals
-const getAllVitals = async (req: Request, res: Response, next: NextFunction) => {
+export async function getVitalSigns(client: Client): Promise<Observation[]> {
 
-    // get some Vitals
-    let result: AxiosResponse = await axios.get(baseServer+''+vitalsURL);
-    let vitalSigns: [vitalSign] = result.data;
-    return res.status(200).json({
-        message: vitalSigns
-    });
+    if (client.state.serverUrl === 'https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4') {
+      return []
+    }
+
+    var vitals: Observation[] = []
+    const vitalsCodes = ['85354-9', '59408-5', '8310-5', '29463-7', '8302-2']
+    const queryPaths = vitalsCodes.map(code => {
+    return 'Observation?code=http://loinc.org|' + code + '&_sort:desc=date&_count=1'
+  })
+
+  vitals = vitals.concat( resourcesFrom(await client.patient.request(queryPaths[0], fhirOptions) as fhirclient.JsonObject) as Observation[] )
+  vitals = vitals.concat( resourcesFrom(await client.patient.request(queryPaths[1], fhirOptions) as fhirclient.JsonObject) as Observation[] )
+  vitals = vitals.concat( resourcesFrom(await client.patient.request(queryPaths[2], fhirOptions) as fhirclient.JsonObject) as Observation[] )
+  vitals = vitals.concat( resourcesFrom(await client.patient.request(queryPaths[3], fhirOptions) as fhirclient.JsonObject) as Observation[] )
+  vitals = vitals.concat( resourcesFrom(await client.patient.request(queryPaths[4], fhirOptions) as fhirclient.JsonObject) as Observation[] )
+  vitals = vitals.filter(v => v !== undefined)
+  return vitals
 };
 
-// getting a single Vital
-const getVital = async (req: Request, res: Response, next: NextFunction) => {
-    // get the vital id from the req
-    let id: string = req.params.id;
-    // get the post
-    let result: AxiosResponse = await axios.get(baseServer+''+vitalsURL+'/${id}');
-    let vital: vitalSign = result.data;
-    return res.status(200).json({
-        message: vital
-    });
-};
-
-export default { getAllVitals, getVital };
+export default { getVitalSigns };
