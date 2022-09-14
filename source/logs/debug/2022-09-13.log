@@ -1,0 +1,22 @@
+2022-09-13 20:53:02 info: =================================
+2022-09-13 20:53:02 info: ======= ENV: development =======
+2022-09-13 20:53:02 info: 🚀 App listening on the port 3000
+2022-09-13 20:53:02 info: =================================
+2022-09-13 21:24:25 info: [0mGET /api-docs [36m301[0m 10.557 ms - 183[0m
+2022-09-13 21:24:25 info: [0mGET /api-docs/ [32m200[0m 11.967 ms - -[0m
+2022-09-13 21:24:25 info: [0mGET /api-docs/swagger-ui-init.js [32m200[0m 0.989 ms - -[0m
+2022-09-13 21:24:25 info: [0mGET /api-docs/swagger-ui.css [32m200[0m 11.422 ms - -[0m
+2022-09-13 21:24:25 info: [0mGET /api-docs/swagger-ui-standalone-preset.js [32m200[0m 7.501 ms - -[0m
+2022-09-13 21:24:25 info: [0mGET /api-docs/swagger-ui-bundle.js [32m200[0m 9.589 ms - -[0m
+2022-09-13 21:24:25 info: [0mGET /api-docs/favicon-32x32.png [32m200[0m 2.147 ms - 628[0m
+2022-09-13 21:24:26 info: [0mGET /api-docs/favicon-32x32.png [36m304[0m 2.867 ms - -[0m
+2022-09-13 21:42:44 error: [GET] /observations >> StatusCode:: 401, Message:: mcc-fhir-server is not provided
+2022-09-13 21:42:44 info: [0mGET /observations [33m401[0m 3.790 ms - 45[0m
+2022-09-13 21:43:04 error: [GET] /observations >> StatusCode:: 401, Message:: mcc-token is not provided
+2022-09-13 21:43:04 info: [0mGET /observations [33m401[0m 2.099 ms - 39[0m
+2022-09-13 21:43:14 info: [0mGET /observations [0m-[0m - ms - -[0m
+2022-09-13 21:58:08 info: [0mGET /observations?subjectId=mcc-pat-pnoelle&code=85354-9 [32m200[0m 424.385 ms - -[0m
+2022-09-13 22:40:28 info: =================================
+2022-09-13 22:40:28 info: ======= ENV: development =======
+2022-09-13 22:40:28 info: 🚀 App listening on the port 3000
+2022-09-13 22:40:28 info: =================================

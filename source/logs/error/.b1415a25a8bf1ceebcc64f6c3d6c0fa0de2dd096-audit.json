@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 30
+    },
+    "auditLog": "C:\\work\\EMIAdvisors\\git\\eCareCommonDataServices\\source\\logs\\error\\.b1415a25a8bf1ceebcc64f6c3d6c0fa0de2dd096-audit.json",
+    "files": [
+        {
+            "date": 1663116782314,
+            "name": "C:\\work\\EMIAdvisors\\git\\eCareCommonDataServices\\source\\logs\\error\\2022-09-13.log",
+            "hash": "6c4c1ee020da367db10dba28fac81885e8df18127d83e2b39ade32b060cc1845"
+        },
+        {
+            "date": 1663165187899,
+            "name": "C:\\work\\EMIAdvisors\\git\\eCareCommonDataServices\\source\\logs\\error\\2022-09-14.log",
+            "hash": "a59c5b039df931187874b6ec25b08dc37a39da8db4b9d3803aa0370e3dd41986"
+        }
+    ],
+    "hashType": "sha256"
+}

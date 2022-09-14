@@ -1,0 +1,6 @@
+# baseURL
+@baseURL = http://localhost:3000
+
+###
+# Get all observations
+GET {{ baseURL }}/observations?subjectId=xxx&code=xxx

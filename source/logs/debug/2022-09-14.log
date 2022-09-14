@@ -1,0 +1,15 @@
+2022-09-14 10:19:48 info: =================================
+2022-09-14 10:19:48 info: ======= ENV: development =======
+2022-09-14 10:19:48 info: 🚀 App listening on the port 3000
+2022-09-14 10:19:48 info: =================================
+2022-09-14 11:10:32 info: [0mGET /api-docs [36m301[0m 12.646 ms - 183[0m
+2022-09-14 11:10:32 info: [0mGET /api-docs/ [32m200[0m 6.808 ms - -[0m
+2022-09-14 11:10:32 info: [0mGET /api-docs/swagger-ui-init.js [32m200[0m 0.933 ms - -[0m
+2022-09-14 11:10:32 info: [0mGET /api-docs/swagger-ui.css [32m200[0m 16.368 ms - -[0m
+2022-09-14 11:10:32 info: [0mGET /api-docs/swagger-ui-standalone-preset.js [32m200[0m 8.586 ms - -[0m
+2022-09-14 11:10:32 info: [0mGET /api-docs/swagger-ui-bundle.js [32m200[0m 10.495 ms - -[0m
+2022-09-14 11:10:33 info: [0mGET /api-docs/favicon-32x32.png [36m304[0m 4.472 ms - -[0m
+2022-09-14 11:10:33 info: [0mGET /api-docs/favicon-32x32.png [36m304[0m 1.337 ms - -[0m
+2022-09-14 11:13:29 error: [GET] /observations >> StatusCode:: 500, Message:: Cannot read properties of undefined (reading 'SMART_KEY')
+2022-09-14 11:13:29 info: [0mGET /observations?subjectId=mcc-pat-pnoelle&code=29463-7 [31m500[0m 365.034 ms - 71[0m
+2022-09-14 11:14:29 info: [0mGET /observations?subjectId=mcc-pat-pnoelle&code=29463-7 [32m200[0m 378.512 ms - -[0m
