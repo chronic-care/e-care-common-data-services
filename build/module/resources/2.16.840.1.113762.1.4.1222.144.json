@@ -1,0 +1,14 @@
+[
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "30428-7",
+  "Display": "MCV [Entitic volume]"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "787-2",
+  "Display": "MCV [Entitic volume] by Automated count"
+ }
+]

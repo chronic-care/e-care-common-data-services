@@ -1,0 +1,14 @@
+[
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "28540-3",
+  "Display": "MCHC [Mass/volume]"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "786-4",
+  "Display": "MCHC [Mass/volume] by Automated count"
+ }
+]

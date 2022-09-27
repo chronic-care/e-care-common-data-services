@@ -1,35 +1,29 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node-terminal",
-            "request": "launch",
-            "name": "Dev typescript-express-starter",
-            "command": "npm run dev"
-        },
-        {
-            "type": "node-terminal",
-            "request": "launch",
-            "name": "Start typescript-express-starter",
-            "command": "npm run start"
-        },
-        {
-            "type": "node-terminal",
-            "request": "launch",
-            "name": "Test typescript-express-starter",
-            "command": "npm run test"
-        },
-        {
-            "type": "node-terminal",
-            "request": "launch",
-            "name": "Lint typescript-express-starter",
-            "command": "npm run lint"
-        },
-        {
-            "type": "node-terminal",
-            "request": "launch",
-            "name": "Lint:Fix typescript-express-starter",
-            "command": "npm run lint:fix"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    // To debug, make sure a *.spec.ts file is active in the editor, then run a configuration
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Active Spec",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ava",
+      "runtimeArgs": ["debug", "--break", "--serial", "${file}"],
+      "port": 9229,
+      "outputCapture": "std",
+      "skipFiles": ["<node_internals>/**/*.js"],
+      "preLaunchTask": "npm: build"
+      // "smartStep": true
+    },
+    {
+      // Use this one if you're already running `yarn watch`
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Active Spec (no build)",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ava",
+      "runtimeArgs": ["debug", "--break", "--serial", "${file}"],
+      "port": 9229,
+      "outputCapture": "std",
+      "skipFiles": ["<node_internals>/**/*.js"]
+      // "smartStep": true
+    }]
 }

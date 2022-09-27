@@ -1,0 +1,26 @@
+[
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "21000-5",
+  "Display": "Erythrocyte distribution width [Entitic volume] by Automated count"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "30384-2",
+  "Display": "Erythrocyte distribution width [Entitic volume]"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "30385-9",
+  "Display": "Erythrocyte distribution width [Ratio]"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "788-0",
+  "Display": "Erythrocyte distribution width [Ratio] by Automated count"
+ }
+]

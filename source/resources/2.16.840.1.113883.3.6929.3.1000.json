@@ -1,0 +1,38 @@
+[
+ {
+  "System": "http://loinc.org",
+  "Version": "2.68",
+  "Code": "48642-3",
+  "Display": "Glomerular filtration rate/1.73 sq M.predicted among non-blacks [Volume Rate/Area] in Serum"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.68",
+  "Code": "48643-1",
+  "Display": "Glomerular filtration rate/1.73 sq M.predicted among blacks [Volume Rate/Area] in Serum"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.68",
+  "Code": "50044-7",
+  "Display": "Glomerular filtration rate/1.73 sq M.predicted among females [Volume Rate/Area] in Serum"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.68",
+  "Code": "50210-4",
+  "Display": "Glomerular filtration rate/1.73 sq M.predicted [Volume Rate/Area] in Serum"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.68",
+  "Code": "62238-1",
+  "Display": "Glomerular filtration rate/1.73 sq M.predicted [Volume Rate/Area] in Serum"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.68",
+  "Code": "70969-1",
+  "Display": "Glomerular filtration rate/1.73 sq M.predicted among males [Volume Rate/Area] in Serum"
+ }
+]

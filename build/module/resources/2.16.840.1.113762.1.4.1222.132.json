@@ -1,0 +1,26 @@
+[
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "2069-3",
+  "Display": "Chloride [Moles/volume] in Blood"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "2075-0",
+  "Display": "Chloride [Moles/volume] in Serum or Plasma"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "41649-5",
+  "Display": "Chloride [Moles/volume] in Venous blood"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "41650-3",
+  "Display": "Chloride [Moles/volume] in Arterial blood"
+ }
+]

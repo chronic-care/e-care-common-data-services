@@ -1,0 +1,14 @@
+[
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "14801-5",
+  "Display": "Iron saturation [Molar fraction] in Serum or Plasma"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "2502-3",
+  "Display": "Iron saturation [Mass Fraction] in Serum or Plasma"
+ }
+]

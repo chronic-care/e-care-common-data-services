@@ -1,0 +1,20 @@
+[
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "28542-9",
+  "Display": "Platelet mean volume [Entitic volume] in Blood"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "32623-1",
+  "Display": "Platelet mean volume [Entitic volume] in Blood by Automated count"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "776-5",
+  "Display": "Platelet mean volume [Entitic volume] in Blood by Rees-Ecker"
+ }
+]

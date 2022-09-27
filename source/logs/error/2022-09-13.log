@@ -1,2 +1,0 @@
-2022-09-13 21:42:44 error: [GET] /observations >> StatusCode:: 401, Message:: mcc-fhir-server is not provided
-2022-09-13 21:43:04 error: [GET] /observations >> StatusCode:: 401, Message:: mcc-token is not provided

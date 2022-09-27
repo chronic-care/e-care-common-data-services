@@ -1,0 +1,32 @@
+[
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "14682-9",
+  "Display": "Creatinine [Moles/volume] in Serum or Plasma"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "2160-0",
+  "Display": "Creatinine [Mass/volume] in Serum or Plasma"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "38483-4",
+  "Display": "Creatinine [Mass/volume] in Blood"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "59826-8",
+  "Display": "Creatinine [Moles/volume] in Blood"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "77140-2",
+  "Display": "Creatinine [Moles/volume] in Serum"
+ }
+]

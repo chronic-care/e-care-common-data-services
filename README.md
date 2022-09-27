@@ -1,44 +1,29 @@
-# E Care Common Data Services
+# e-care-common-data-services
 
-Common data service between mcc-user and mcc-provider app
+Common data service for mcc-provider and mcc-care-planner
 
-## Pre-requisites
-prepare `.env.development.local` , `.env.production.local` to configure the app, default development env are as follows:
-```
-# PORT
-PORT = 3000
-
-# TOKEN
-SECRET_KEY = secretKey
-
-# LOG
-LOG_FORMAT = dev
-LOG_DIR = ../logs
-
-# CORS
-ORIGIN = *
-CREDENTIALS = true
-```
-
-## Installing the app
-Run
+## Npm installation
 
 ```sh
-npm ci
+npm i e-care-common-data-services
 ```
 
-## Running the app
-Run
-
+## How to work with this locally
 ```sh
-npm run dev
+npm run build && npm pack
 ```
-
-## Build and run the app for production build
-Run
+and you may install it locally
 ```sh
-npm start
+npm i your/tar/tgz/path
 ```
 
-## API docs
-after app is running, API endpoints are documented in `http://localhost:3000/api-docs`, you may also try out the API in the swagger docs
+### Alternative to work with this locally
+on this repository
+```sh
+npm link
+```
+
+on use case project repository
+```sh
+npm link e-care-common-data-services
+```

@@ -1,0 +1,962 @@
+[
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "10875004",
+  "Display": "Severe mixed bipolar I disorder with psychotic features"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "10981006",
+  "Display": "Severe mixed bipolar I disorder with psychotic features (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "111485001",
+  "Display": "Mixed bipolar I disorder in full remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "1196001",
+  "Display": "Chronic bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "133091000119105",
+  "Display": "Rapid cycling bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "13313007",
+  "Display": "Mild bipolar disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "13581000",
+  "Display": "Severe bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "13746004",
+  "Display": "Bipolar disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "14495005",
+  "Display": "Severe bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "1499003",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "162004",
+  "Display": "Severe manic bipolar I disorder without psychotic features (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "16295005",
+  "Display": "Bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "16506000",
+  "Display": "Mixed bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "17782008",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191618007",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191620005",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191621009",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191623007",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191625000",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191627008",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191629006",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191630001",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191634005",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191636007",
+  "Display": "Mixed bipolar affective disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191638008",
+  "Display": "Mixed bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191639000",
+  "Display": "Mixed bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191641004",
+  "Display": "Mixed bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "191643001",
+  "Display": "Mixed bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "192362008",
+  "Display": "Bipolar affective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "19300006",
+  "Display": "Severe bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "20960007",
+  "Display": "Severe bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "21900002",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "22121000",
+  "Display": "Depressed bipolar I disorder in full remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "22407005",
+  "Display": "Bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "231444002",
+  "Display": "Organic bipolar disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "23741000119105",
+  "Display": "Severe manic bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "261000119107",
+  "Display": "Severe depressed bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "26203008",
+  "Display": "Severe depressed bipolar I disorder with psychotic features"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "26530004",
+  "Display": "Severe bipolar disorder with psychotic features"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "271000119101",
+  "Display": "Severe mixed bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "28663008",
+  "Display": "Severe manic bipolar I disorder with psychotic features (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "28884001",
+  "Display": "Moderate bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.00",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.01",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.02",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.03",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.04",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.05",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.06",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.40",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.41",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.42",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.43",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.44",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.45",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.46",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.50",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.51",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.52",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.53",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.54",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.55",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.56",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.60",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.61",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.62",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.63",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.64",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.65",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.66",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.7",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.80",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "2.16.840.1.113883.6.103",
+  "Version": "2013",
+  "Code": "296.89",
+  "Display": "Other bipolar disorders"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "29929003",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "30520009",
+  "Display": "Severe bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "30687003",
+  "Display": "Bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "30935000",
+  "Display": "Manic bipolar I disorder in full remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "31446002",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "33380008",
+  "Display": "Severe manic bipolar I disorder with psychotic features"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "34315001",
+  "Display": "Bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "3530005",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "35481005",
+  "Display": "Mixed bipolar I disorder in remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "35846004",
+  "Display": "Moderate bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "36583000",
+  "Display": "Mixed bipolar I disorder in partial remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "371596008",
+  "Display": "Bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "371599001",
+  "Display": "Severe bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "371600003",
+  "Display": "Severe bipolar disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "371604007",
+  "Display": "Severe bipolar II disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "38368003",
+  "Display": "Schizoaffective disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "40926005",
+  "Display": "Moderate mixed bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "41552001",
+  "Display": "Mild bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "41832009",
+  "Display": "Severe bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "41836007",
+  "Display": "Bipolar disorder in full remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "43568002",
+  "Display": "Bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "43769008",
+  "Display": "Mild mixed bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "4441000",
+  "Display": "Severe bipolar disorder with psychotic features (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "45479006",
+  "Display": "Manic bipolar I disorder in remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "46229002",
+  "Display": "Severe mixed bipolar I disorder without psychotic features (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "48937005",
+  "Display": "Bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "49468007",
+  "Display": "Depressed bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "49512000",
+  "Display": "Depressed bipolar I disorder in partial remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "51637008",
+  "Display": "Chronic bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "53049002",
+  "Display": "Severe bipolar disorder without psychotic features (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "53607008",
+  "Display": "Depressed bipolar I disorder in remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "54761006",
+  "Display": "Severe depressed bipolar I disorder with psychotic features"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "55516002",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "5703000",
+  "Display": "Bipolar disorder in partial remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "59617007",
+  "Display": "Severe depressed bipolar I disorder with psychotic features (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "61403008",
+  "Display": "Severe depressed bipolar I disorder without psychotic features (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "63249007",
+  "Display": "Manic bipolar I disorder in partial remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "64731001",
+  "Display": "Severe mixed bipolar I disorder with psychotic features"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "65042007",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "66631006",
+  "Display": "Moderate depressed bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "68569003",
+  "Display": "Manic bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "70546001",
+  "Display": "Severe bipolar disorder with psychotic features"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "71294008",
+  "Display": "Mild bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "71984005",
+  "Display": "Mild manic bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "73471000",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "74686005",
+  "Display": "Mild depressed bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "75360000",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "75752004",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "78269000",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "78640000",
+  "Display": "Severe manic bipolar I disorder with psychotic features"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "79584002",
+  "Display": "Moderate bipolar disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "81319007",
+  "Display": "Severe bipolar II disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "82998009",
+  "Display": "Moderate manic bipolar I disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "83225003",
+  "Display": "Bipolar II disorder (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "85248005",
+  "Display": "Bipolar disorder in remission (disorder)"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "86058007",
+  "Display": "Severe bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "87203005",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "87950005",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://snomed.info/sct",
+  "Version": "2021-03",
+  "Code": "9340000",
+  "Display": "Bipolar I disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.0",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.10",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.11",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.12",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.13",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.2",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.30",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.31",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.32",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.4",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.5",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.60",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.61",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.62",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.63",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.64",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.70",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.71",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.72",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.73",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.74",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.75",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.76",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.77",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.78",
+  "Display": "Bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.81",
+  "Display": "Bipolar II disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.89",
+  "Display": "Other bipolar disorder"
+ },
+ {
+  "System": "http://hl7.org/fhir/sid/icd-10-cm",
+  "Version": "2022",
+  "Code": "F31.9",
+  "Display": "Bipolar disorder"
+ }
+]

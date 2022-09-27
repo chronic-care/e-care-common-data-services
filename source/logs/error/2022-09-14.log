@@ -1,1 +1,0 @@
-2022-09-14 11:13:29 error: [GET] /observations >> StatusCode:: 500, Message:: Cannot read properties of undefined (reading 'SMART_KEY')

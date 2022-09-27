@@ -1,0 +1,14 @@
+[
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "27353-2",
+  "Display": "Glucose mean value [Mass/volume] in Blood Estimated from glycated hemoglobin"
+ },
+ {
+  "System": "http://loinc.org",
+  "Version": "2.70",
+  "Code": "53553-4",
+  "Display": "Glucose mean value [Moles/volume] in Blood Estimated from glycated hemoglobin"
+ }
+]
