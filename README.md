@@ -9,21 +9,22 @@ npm i e-care-common-data-services
 ```
 
 ## How to work with this locally
+Install dependencies
 ```sh
-npm run build && npm pack
-```
-and you may install it locally
-```sh
-npm i your/tar/tgz/path
+npm ci
 ```
 
-### Alternative to work with this locally
-on this repository
+Build typescript
+```sh
+npm run build
+```
+
+Run this on this project directory to register this package on global directory
 ```sh
 npm link
 ```
 
-on use case project repository
+Run this on mcc-provider or mcc-care-planner app directory
 ```sh
 npm link e-care-common-data-services
 ```

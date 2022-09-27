@@ -13,7 +13,7 @@ export const getAllCodes = async (valueName: string): Promise<string[]> => {
     `../resources/${valueName}.json`
   );
 
-  const mappedCodes = Object.values(valueSets)?.reduce(
+  const mappedCodes: string[] = Object.values(valueSets)?.reduce(
     (accumulator, current) => {
       if (current && !Array.isArray(current)) {
         // eslint-disable-next-line functional/immutable-data

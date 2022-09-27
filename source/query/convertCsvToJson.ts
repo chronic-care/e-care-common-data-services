@@ -1,6 +1,5 @@
-export {};
+// README: This is only to convert CSV to JSON, to run this, change it to js and simply run node convertCsvToJson.js
 
-// This is only to convert CSV to JSON, to run this, change it to js and simply run node convertCsvToJson.js
 // const fs = require('fs')
 // const path = require('path')
 // let csvToJson = require('convert-csv-to-json');
