@@ -1,1 +1,12 @@
+.idea/*
+.nyc_output
+build
 node_modules
+test
+source/**.js
+coverage
+*.log
+yarn.lock
+e-care-common-data-services-1.0.0.tgz
+
+source/.DS_Store

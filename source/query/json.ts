@@ -1,5 +1,7 @@
 import { ValueAsset } from '../types';
 
+// This is the code on how we query json files to map the codes
+
 const internalGetCodeKey = (uuesystem: string, code: string): string => {
   return uuesystem + '%7C' + code;
 };

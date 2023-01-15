@@ -3,14 +3,14 @@ const logger = {
     if (typeof message === 'object') {
       console.info(message);
     } else {
-      console.info(`EccDS: ${message}`);
+      console.info(`%c EccDS: ${message}`, 'color: #0a95ff');
     }
   },
   debug: (message) => {
     if (typeof message === 'object') {
       console.log(message);
     } else {
-      console.log(`EccDS: ${message}`);
+      console.log(`%c EccDS: ${message}`, 'color: #bada55');
     }
   },
   error: (message) => {

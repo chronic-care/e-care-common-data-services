@@ -54,8 +54,8 @@ export const getObservations = async (
   sort?: string,
   max?: string
 ): Promise<Observation[]> => {
-  if (!code || !mode) {
-    log.error('getObservations - required parameters not found - (code, mode)');
+  if (!code) {
+    log.error('getObservations - required parameters not found - (code)');
     return [];
   }
   const client = await FHIR.oauth2.ready();
@@ -152,7 +152,8 @@ export const getObservationsByValueSet = async (
 export const getObservationsByCategory = async (
   category: string,
   sort?: string,
-  max?: string
+  max?: string,
+  date?: string
 ): Promise<Observation[]> => {
   if (!category) {
     log.error('getObservationsByCategory - category not found');
@@ -166,9 +167,11 @@ export const getObservationsByCategory = async (
     `getObservationsByCategory - start with category - ${category} - ${sort} ${max}`
   );
 
-  const queryPath = `Observation?category=${category}&_sort=${sortType}&_count=${
-    max ?? 100
-  }`;
+  const queryPath = `Observation?category=${category}
+    ${sortType ? `&_sort=` : ''}
+    ${max ? `&_count=${max}` : ''}
+    ${date ? `&date=${date}` : ''}
+  `;
   const observationRequest: fhirclient.JsonArray = await client.patient.request(
     queryPath,
     fhirOptions

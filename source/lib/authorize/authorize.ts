@@ -1,20 +1,14 @@
 import FHIR from 'fhirclient';
+import { fhirclient } from 'fhirclient/lib/types';
 
 import log from '../../utils/loglevel';
 
-export const authorize = async (
-  redirectUri?: string,
-  clientId?: string,
-  scope?: string
-) => {
+export const authorize = async (props: fhirclient.AuthorizeParams) => {
   log.info('Authenticating client');
 
-  await FHIR.oauth2.authorize({
-    // Meld Synthea test data sandbox
-    redirectUri: redirectUri ?? '',
-    clientId: clientId ?? '9ff4f5c4-f07c-464f-8d4b-90b90a76bebf',
-    scope: scope ?? 'patient/*.read openid launch',
-  });
+  await FHIR.oauth2.authorize(props);
+
+  log.info('Authenticating client success');
 };
 
 export const checkAuthorize = async () => {
