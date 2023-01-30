@@ -41,7 +41,7 @@
     "types": ["node"],
     "typeRoots": ["node_modules/@types", "source/types"]
   },
-  "include": ["source/**/*.ts"],
+  "include": ["source/**/*.ts", "source/query/convertCsvToJson.js", "source/query/convertCsvToJson.js"],
   "exclude": ["node_modules/**"],
   "compileOnSave": false
 }

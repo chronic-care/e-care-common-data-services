@@ -79,7 +79,7 @@ export const getCareplansByStatusAndCategory = async (
   ) as CarePlan[];
 
   log.info(
-    `getCareplansByStatusAndCategory - successful with pre-response ${filteredCareplans[0].toString()} - with status ${filteredCareplans[0]?.status}`
+    `getCareplansByStatusAndCategory - successful with pre-response ${filteredCareplans[0]?.toString()} - with status ${filteredCareplans[0]?.status}`
   );
   log.debug({ serviceName: 'getCareplansByStatusAndCategory', result: filteredCareplans });
   return filteredCareplans;

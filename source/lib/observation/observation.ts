@@ -3,7 +3,7 @@ import FHIR from 'fhirclient';
 import { fhirclient } from 'fhirclient/lib/types';
 
 import { EccMode } from '../../constants/mode';
-import { getAllCodes } from '../../query/json';
+import { getAllCodes, getCodesFromValueSetCode } from '../../query/json';
 import type { ObservationMode } from '../../types';
 import log from '../../utils/loglevel';
 
@@ -65,9 +65,8 @@ export const getObservations = async (
   log.info(
     `getObservations - start with code - ${code} - ${mode} ${sort} ${max}`
   );
-  const queryPath = `Observation?${
-    EccMode[mode] ?? EccMode.code
-  }=http://loinc.org|${code}&_sort=${sortType}&_count=${max ?? 100}`;
+  const queryPath = `Observation?${EccMode[mode] ?? EccMode.code
+    }=http://loinc.org|${code}&_sort=${sortType}&_count=${max ?? 100}`;
   const observationRequest: fhirclient.JsonArray = await client.patient.request(
     queryPath,
     fhirOptions
@@ -199,3 +198,52 @@ export const getObservationsByCategory = async (
   });
   return filteredObservations;
 };
+
+export const getLatestObservation = async (code: string, translate: boolean, mode?: string): Promise<Observation> => {
+  if (!code) {
+    log.error('getLatestObservation - code not found');
+    return notFoundResponse() as unknown as Observation;
+  }
+
+  const client = await FHIR.oauth2.ready();
+  let codeValueSets = code;
+
+  if (translate) {
+    if (code.includes('|')) {
+      const codeArray = code.split('|')
+      codeValueSets = await getCodesFromValueSetCode(codeArray[0], codeArray[1]);
+    } else {
+      codeValueSets = await getCodesFromValueSetCode('http://loinc.org', code);
+    }
+  }
+
+  log.info(`getLatestObservation - start with code - ${code}`);
+  const queryPath = `Observation?${EccMode[mode] ?? EccMode.code}=http://loinc.org|${codeValueSets}&_sort=-date&_count=1`;
+  const observationRequest: fhirclient.JsonArray = await client.patient.request(
+    queryPath,
+    fhirOptions
+  );
+
+  const observationResource: Observation[] = resourcesFrom(
+    observationRequest
+  ) as Observation[];
+
+  const filteredObservations: Observation[] = observationResource.filter(
+    (v) => v !== undefined && v.resourceType === 'Observation'
+  );
+
+  if (!filteredObservations.length) {
+    log.error('getObservation - empty observation');
+    return notFoundResponse(code) as unknown as Observation;
+  }
+
+  log.info(
+    `getObservation - successful with code ${code} - with status ${filteredObservations[0].status}`
+  );
+  log.debug({ serviceName: 'getObservation', result: filteredObservations[0] });
+  return filteredObservations[0];
+};
+
+// TODO add query observation segmented
+
+// TODO add check for isBlackEgfr
