@@ -1,3 +1,5 @@
+import { Observation } from "fhir/r4";
+
 export type MccTime = {
   value?: string;
 };
@@ -192,3 +194,13 @@ export type MccObservation = {
   dataAbsentReason?: MccCodeableConcept;
   fhirid?: string;
 };
+
+export type MccObservationList = {
+  primaryCode: string,
+  observations: Array<Observation>,
+}
+
+export type MccObservationCollection = {
+  observations?: Array<MccObservationList>,
+  result?: string,
+}

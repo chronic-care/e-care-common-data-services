@@ -5,9 +5,11 @@ import { fhirclient } from 'fhirclient/lib/types';
 import { EccMode } from '../../constants/mode';
 import { getAllCodes, getCodesFromValueSetCode } from '../../query/json';
 import type { ObservationMode } from '../../types';
+import { MccObservationCollection } from '../../types/mcc-observations';
 import log from '../../utils/loglevel';
 
 import {
+  convertToObservationCollection,
   fhirOptions,
   notFoundResponse,
   resourcesFrom,
@@ -244,6 +246,63 @@ export const getLatestObservation = async (code: string, translate: boolean, mod
   return filteredObservations[0];
 };
 
-// TODO add query observation segmented
+export const getObservationsSegmented = async (valueSet: string, max: number, sort: string, mode: string): Promise<MccObservationCollection> => {
+  if (!valueSet) {
+    log.error('getObservationsSegmented - valueSet not found');
+    return {
+      result: 'valueSet not found'
+    };
+  }
 
-// TODO add check for isBlackEgfr
+  const client = await FHIR.oauth2.ready();
+
+  log.info('getObservationsSegmented - getAllCodes');
+  const codes = await getAllCodes(valueSet);
+  const combinedCodes = codes.join(',');
+
+  if (!combinedCodes) {
+    log.error('getObservationsSegmented - getAllCodes empty');
+    return {
+      result: 'codes from valueset Empty'
+    };
+  }
+
+  const sortType = sort === 'ascending' ? 'date' : '-date';
+
+  log.info(
+    `getObservationsSegmented - start with valueSet - ${valueSet} - ${sort} ${max}`
+  );
+
+  const queryPath = `Observation?${mode ?? EccMode.code}=${combinedCodes}&_sort=${sortType}&_count=${max}`;
+  const observationRequest: fhirclient.JsonArray = await client.patient.request(
+    queryPath,
+    fhirOptions
+  );
+
+  const observationResource: Observation[] = resourcesFrom(
+    observationRequest
+  ) as Observation[];
+
+  const filteredObservations: Observation[] = observationResource.filter(
+    (v) => v !== undefined && v.resourceType === 'Observation'
+  );
+
+  if (!filteredObservations.length) {
+    log.error('getObservationsSegmented - valueSet not found');
+    return {
+      result: 'valueSet not found'
+    };
+  }
+
+  const segmentedObservation = convertToObservationCollection(filteredObservations);
+
+  log.info(
+    `getObservationsSegmented - successful with segmented ${valueSet}`
+  );
+  log.debug({
+    serviceName: 'getObservationsSegmented',
+    result: segmentedObservation,
+  });
+
+  return segmentedObservation;
+}

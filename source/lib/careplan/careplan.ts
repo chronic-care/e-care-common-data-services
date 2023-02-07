@@ -85,7 +85,7 @@ export const getCareplansByStatusAndCategory = async (
   return filteredCareplans;
 };
 
-export const getCondition = async (urlPath: string): Promise<Condition> => {
+export const getConditionFromUrl = async (urlPath: string): Promise<Condition> => {
   if (!urlPath) {
     log.error('getCondition - urlPath not found');
     return {} as unknown as Condition;
@@ -186,7 +186,7 @@ export const getBestCareplan = async (
     filteredCareplans.map(async (careplan: CarePlan) => {
       const addresses = await Promise.all(
         careplan.addresses.map(async (address) => {
-          const condition: Condition = await getCondition(address.reference);
+          const condition: Condition = await getConditionFromUrl(address.reference);
           return {
             ...address,
             reference: getConceptDisplayString(condition.code),

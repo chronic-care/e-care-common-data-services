@@ -1,5 +1,8 @@
+/* eslint-disable functional/immutable-data */
 import { Observation, Resource } from 'fhir/r4';
 import { fhirclient } from 'fhirclient/lib/types';
+
+import { MccObservationCollection } from '../../types/mcc-observations';
 
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
@@ -58,3 +61,26 @@ export const getValue = (obs: Observation): any => {
     };
   }
 };
+
+export const convertToObservationCollection = (observations: Observation[]): MccObservationCollection => {
+  const observationMap = {}
+  const observationCollection = {
+    observations: []
+  };
+
+  observations.forEach((obs) => {
+    const key = obs.code.id;
+    const fndList = {
+      primaryCode: "",
+      observations: []
+    }
+    if (!observationMap[key]) {
+      fndList.primaryCode = obs.code.coding[0].code;
+      fndList.observations.push(obs);
+    }
+
+    observationCollection.observations.push(fndList);
+  });
+
+  return observationCollection
+}
