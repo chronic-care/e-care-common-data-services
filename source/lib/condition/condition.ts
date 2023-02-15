@@ -5,8 +5,6 @@ import { fhirclient } from 'fhirclient/lib/types';
 import log from '../../utils/loglevel';
 
 import {
-  fhirOptions,
-  getConceptDisplayString,
   notFoundResponse,
   resourcesFrom,
   resourcesFromObject,
