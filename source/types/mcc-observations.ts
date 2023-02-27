@@ -1,4 +1,4 @@
-import { Observation } from "fhir/r4";
+import { Observation, Procedure, ServiceRequest } from "fhir/r4";
 
 export type MccTime = {
   value?: string;
@@ -204,3 +204,20 @@ export type MccObservationCollection = {
   observations?: Array<MccObservationList>,
   result?: string,
 }
+
+export type Contact = {
+  type: string;
+  role: string;
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  organizationName: string;
+  relFhirId: string;
+  teamId: string;
+  teamName;
+}
+
+export type CounselingSummary = Procedure | ServiceRequest
+export type EducationSummary = Procedure | ServiceRequest
+export type ReferralSummary = ServiceRequest
