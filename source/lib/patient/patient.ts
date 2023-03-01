@@ -1,9 +1,12 @@
 import { Patient } from 'fhir/r4';
+
+import { DomainResource } from 'fhir/r4';
+
 import FHIR from 'fhirclient';
+
 import { fhirclient } from 'fhirclient/lib/types';
 
 import log from '../../utils/loglevel';
-
 import {
   notFoundResponse,
   resourcesFrom,
@@ -27,6 +30,17 @@ export const getPatientsByName = async (name: string): Promise<Patient[]> => {
   );
   log.debug({ serviceName: 'getPatients', result: filteredPatients });
   return filteredPatients;
+};
+
+import {
+  fhirOptions,
+} from './patient.util';
+
+
+export const getReference = async (theReference: string): Promise<DomainResource> => {
+  // return client.request(theReference, fhirOptions)
+  const client = await FHIR.oauth2.ready();
+  return client.request(theReference, fhirOptions);
 };
 
 export const getPatient = async (id: string): Promise<Patient> => {
