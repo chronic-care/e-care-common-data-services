@@ -2,14 +2,14 @@ import { ServiceRequest } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import { fhirclient } from 'fhirclient/lib/types';
 
-import { ReferralSummary } from '../../types/mcc-observations';
+import { MccReferralSummary } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
 
 import {
   resourcesFrom,
 } from './referral.util';
 
-export const getSummaryReferrals = async (): Promise<ReferralSummary[]> => {
+export const getSummaryReferrals = async (): Promise<MccReferralSummary[]> => {
   const client = await FHIR.oauth2.ready();
 
   const queryPath = `ServiceRequest?category=440379008,3457005,409073007,409063005`;

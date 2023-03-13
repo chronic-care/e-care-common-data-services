@@ -2,14 +2,14 @@ import { Procedure, ServiceRequest } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import { fhirclient } from 'fhirclient/lib/types';
 
-import { CounselingSummary } from '../../types/mcc-observations';
+import { MccCounselingSummary } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
 
 import {
   resourcesFrom,
 } from './counseling.util';
 
-export const getSummaryCounselings = async (): Promise<CounselingSummary[]> => {
+export const getSummaryCounselings = async (): Promise<MccCounselingSummary[]> => {
   const client = await FHIR.oauth2.ready();
 
   const queryPath1 = `Procedure?category=409063005`;

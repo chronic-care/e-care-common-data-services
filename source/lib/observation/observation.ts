@@ -5,7 +5,7 @@ import { fhirclient } from 'fhirclient/lib/types';
 import { EccMode } from '../../constants/mode';
 import { getAllCodes, getCodesFromValueSetCode } from '../../query/json';
 import type { ObservationMode } from '../../types';
-import { MccObservationCollection } from '../../types/mcc-observations';
+import { legacy_MccObservationCollection, MccObservation } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
 
 import {
@@ -15,10 +15,10 @@ import {
   resourcesFrom,
 } from './observation.util';
 
-export const getObservation = async (code: string): Promise<Observation> => {
+export const getObservation = async (code: string): Promise<MccObservation> => {
   if (!code) {
     log.error('getObservation - code not found');
-    return notFoundResponse() as unknown as Observation;
+    return notFoundResponse() as unknown as MccObservation;
   }
 
   const client = await FHIR.oauth2.ready();
@@ -40,14 +40,16 @@ export const getObservation = async (code: string): Promise<Observation> => {
 
   if (!filteredObservations.length) {
     log.error('getObservation - empty observation');
-    return notFoundResponse(code) as unknown as Observation;
+    return notFoundResponse(code) as unknown as MccObservation;
   }
 
+  const filteredMccObservation = filteredObservations[0]
+
   log.info(
-    `getObservation - successful with code ${code} - with status ${filteredObservations[0].status}`
+    `getObservation - successful with code ${code} - with status ${filteredMccObservation.status}`
   );
-  log.debug({ serviceName: 'getObservation', result: filteredObservations[0] });
-  return filteredObservations[0];
+  log.debug({ serviceName: 'getObservation', result: filteredMccObservation });
+  return filteredMccObservation;
 };
 
 export const getObservations = async (
@@ -55,7 +57,7 @@ export const getObservations = async (
   mode?: ObservationMode,
   sort?: string,
   max?: string
-): Promise<Observation[]> => {
+): Promise<MccObservation[]> => {
   if (!code) {
     log.error('getObservations - required parameters not found - (code)');
     return [];
@@ -87,18 +89,20 @@ export const getObservations = async (
     return [];
   }
 
+  const filteredMccObservation = filteredObservations
+
   log.info(
-    `getObservations - successful with code ${code} - with length ${filteredObservations.length}`
+    `getObservations - successful with code ${code} - with length ${filteredMccObservation.length}`
   );
-  log.debug({ serviceName: 'getObservations', result: filteredObservations });
-  return filteredObservations;
+  log.debug({ serviceName: 'getObservations', result: filteredMccObservation });
+  return filteredMccObservation;
 };
 
 export const getObservationsByValueSet = async (
   valueSet: string,
   sort?: string,
   max?: string
-): Promise<Observation[]> => {
+): Promise<MccObservation[]> => {
   if (!valueSet) {
     log.error('getObservationsByValueSet - valueSet not found');
     return [];
@@ -140,14 +144,16 @@ export const getObservationsByValueSet = async (
     return [];
   }
 
+  const filteredMccObservation = filteredObservations
+
   log.info(
-    `getObservationsByValueSet - successful with valueSet ${valueSet} - with length ${filteredObservations.length}`
+    `getObservationsByValueSet - successful with valueSet ${valueSet} - with length ${filteredMccObservation.length}`
   );
   log.debug({
     serviceName: 'getObservationsByValueSet',
-    result: filteredObservations,
+    result: filteredMccObservation,
   });
-  return filteredObservations;
+  return filteredMccObservation;
 };
 
 export const getObservationsByCategory = async (
@@ -155,7 +161,7 @@ export const getObservationsByCategory = async (
   sort?: string,
   max?: string,
   date?: string
-): Promise<Observation[]> => {
+): Promise<MccObservation[]> => {
   if (!category) {
     log.error('getObservationsByCategory - category not found');
     return [];
@@ -246,7 +252,7 @@ export const getLatestObservation = async (code: string, translate: boolean, mod
   return filteredObservations[0];
 };
 
-export const getObservationsSegmented = async (valueSet: string, max: number, sort: string, mode: string): Promise<MccObservationCollection> => {
+export const getObservationsSegmented = async (valueSet: string, max: number, sort: string, mode: string): Promise<legacy_MccObservationCollection> => {
   if (!valueSet) {
     log.error('getObservationsSegmented - valueSet not found');
     return {

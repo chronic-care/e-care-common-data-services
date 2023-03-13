@@ -1,4 +1,3 @@
-import { Condition } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import { fhirclient } from 'fhirclient/lib/types';
 
