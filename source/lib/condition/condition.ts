@@ -2,6 +2,7 @@ import { Condition } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import { fhirclient } from 'fhirclient/lib/types';
 
+import { MccCondition } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
 
 import {
@@ -10,7 +11,7 @@ import {
   resourcesFromObject,
 } from './condition.util';
 
-export const getSummaryConditions = async (): Promise<Condition[]> => {
+export const getSummaryConditions = async (): Promise<MccCondition[]> => {
   const client = await FHIR.oauth2.ready();
 
   const queryPath1 = `Condition?category=http%3A%2F%2Fterminology.hl7.org%2FCodeSystem%2Fcondition-category%7Cproblem-list-item`;
@@ -24,14 +25,14 @@ export const getSummaryConditions = async (): Promise<Condition[]> => {
   );
 
   // condition from problem list item
-  const filteredConditions1: Condition[] = resourcesFrom(
+  const filteredConditions1: MccCondition[] = resourcesFrom(
     conditionRequest1
-  ) as Condition[];
+  ) as MccCondition[];
 
   // condition from health concern
-  const filteredConditions2: Condition[] = resourcesFrom(
+  const filteredConditions2: MccCondition[] = resourcesFrom(
     conditionRequest2
-  ) as Condition[];
+  ) as MccCondition[];
 
   log.info(
     `getSummaryConditions - successful`
@@ -43,7 +44,7 @@ export const getSummaryConditions = async (): Promise<Condition[]> => {
   return filteredConditions;
 };
 
-export const getConditions = async (): Promise<Condition[]> => {
+export const getConditions = async (): Promise<MccCondition[]> => {
   const client = await FHIR.oauth2.ready();
 
   const queryPath = `Condition`;
@@ -51,9 +52,9 @@ export const getConditions = async (): Promise<Condition[]> => {
     queryPath
   );
 
-  const filteredConditions: Condition[] = resourcesFrom(
+  const filteredConditions: MccCondition[] = resourcesFrom(
     conditionRequest
-  ) as Condition[];
+  ) as MccCondition[];
 
   log.info(
     `getConditions - successful`
@@ -62,10 +63,10 @@ export const getConditions = async (): Promise<Condition[]> => {
   return filteredConditions;
 };
 
-export const getCondition = async (id: string): Promise<Condition> => {
+export const getCondition = async (id: string): Promise<MccCondition> => {
   if (!id) {
     log.error('getCondition - id not found');
-    return notFoundResponse as unknown as Condition;
+    return notFoundResponse as unknown as MccCondition;
   }
 
   const client = await FHIR.oauth2.ready();
@@ -75,9 +76,9 @@ export const getCondition = async (id: string): Promise<Condition> => {
     queryPath
   );
 
-  const filteredCondition: Condition = resourcesFromObject(
+  const filteredCondition: MccCondition = resourcesFromObject(
     conditionRequest
-  ) as Condition;
+  ) as MccCondition;
 
   log.info(
     `getCondition - successful with id ${id}`
