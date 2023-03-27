@@ -1,7 +1,7 @@
-import { Questionnaire, QuestionnaireResponse } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import { fhirclient } from 'fhirclient/lib/types';
 
+import { MccQuestionnaire, MccQuestionnaireResponse } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
 import { getObservation } from '../observation';
 import { getValue } from '../observation/observation.util';
@@ -28,11 +28,11 @@ const getQuestionnaireCodes = async (code: string): Promise<string> => {
     fhirOptions
   );
 
-  const questionnaireResource: Questionnaire[] = resourcesFrom(
+  const questionnaireResource: MccQuestionnaire[] = resourcesFrom(
     questionnaireRequest
-  ) as Questionnaire[];
+  ) as MccQuestionnaire[];
 
-  const filteredQuestionnaire: Questionnaire[] = questionnaireResource.filter(
+  const filteredQuestionnaire: MccQuestionnaire[] = questionnaireResource.filter(
     (v) =>
       v !== undefined &&
       v.resourceType === 'Questionnaire' &&
@@ -51,10 +51,10 @@ const getQuestionnaireCodes = async (code: string): Promise<string> => {
 
 export const getQuestionnaireItem = async (
   code: string
-): Promise<QuestionnaireResponse> => {
+): Promise<MccQuestionnaireResponse> => {
   if (!code) {
     log.error('getQuestionnaireItem - code not found');
-    return notFoundResponse() as unknown as QuestionnaireResponse;
+    return notFoundResponse() as unknown as MccQuestionnaireResponse;
   }
   const client = await FHIR.oauth2.ready();
 
@@ -69,18 +69,18 @@ export const getQuestionnaireItem = async (
     const questionnaireRequest: fhirclient.JsonArray =
       await client.patient.request(queryPath, fhirOptions);
 
-    const questionnaireResource: QuestionnaireResponse[] = resourcesFrom(
+    const questionnaireResource: MccQuestionnaireResponse[] = resourcesFrom(
       questionnaireRequest
-    ) as QuestionnaireResponse[];
+    ) as MccQuestionnaireResponse[];
 
-    const filteredQuestionnaire: QuestionnaireResponse[] =
+    const filteredQuestionnaire: MccQuestionnaireResponse[] =
       questionnaireResource.filter(
         (v) => v !== undefined && v.resourceType === 'QuestionnaireResponse'
       );
 
     if (!filteredQuestionnaire.length) {
       log.error('getQuestionnaireItem - empty questionnaire');
-      return notFoundResponse(code) as unknown as QuestionnaireResponse;
+      return notFoundResponse(code) as unknown as MccQuestionnaireResponse;
     }
 
     log.info(
@@ -97,7 +97,7 @@ export const getQuestionnaireItem = async (
 
     if (observation.status === 'notfound') {
       log.error('getQuestionnaireItem - empty observations');
-      return notFoundResponse(code) as unknown as QuestionnaireResponse;
+      return notFoundResponse(code) as unknown as MccQuestionnaireResponse;
     }
 
     const mappedObservationToQuestioinnaireResponse = {
@@ -118,7 +118,7 @@ export const getQuestionnaireItem = async (
       serviceName: 'getQuestionnaireItem',
       result: mappedObservationToQuestioinnaireResponse,
     });
-    return mappedObservationToQuestioinnaireResponse as unknown as QuestionnaireResponse;
+    return mappedObservationToQuestioinnaireResponse as unknown as MccQuestionnaireResponse;
   }
 };
 
@@ -126,7 +126,7 @@ export const getQuestionnaireItems = async (
   code: string,
   count?: string,
   sort?: string
-): Promise<QuestionnaireResponse[]> => {
+): Promise<MccQuestionnaireResponse[]> => {
   if (!code) {
     log.error('getQuestionnaireItems - code not found');
     return [];
@@ -142,17 +142,16 @@ export const getQuestionnaireItems = async (
     );
     const sortType = sort === 'ascending' ? 'date' : '-date';
 
-    const queryPath = `QuestionnaireResponse?questionnaire=${questionnaireCodes}&_sort=${sortType}&_count=${
-      count ?? '100'
-    }`;
+    const queryPath = `QuestionnaireResponse?questionnaire=${questionnaireCodes}&_sort=${sortType}&_count=${count ?? '100'
+      }`;
     const questionnaireRequest: fhirclient.JsonArray =
       await client.patient.request(queryPath, fhirOptions);
 
-    const questionnaireResource: QuestionnaireResponse[] = resourcesFrom(
+    const questionnaireResource: MccQuestionnaireResponse[] = resourcesFrom(
       questionnaireRequest
-    ) as QuestionnaireResponse[];
+    ) as MccQuestionnaireResponse[];
 
-    const filteredQuestionnaire: QuestionnaireResponse[] =
+    const filteredQuestionnaire: MccQuestionnaireResponse[] =
       questionnaireResource.filter(
         (v) => v !== undefined && v.resourceType === 'QuestionnaireResponse'
       );

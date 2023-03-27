@@ -1,4 +1,4 @@
-import { CarePlan, Condition, Goal, Medication, Observation, Patient, PatientContact, Procedure, Questionnaire, QuestionnaireResponse, ServiceRequest } from "fhir/r4";
+import { CarePlan, CodeableConcept, Condition, Goal, GoalTarget, MedicationRequest, Observation, Patient, PatientContact, Procedure, Questionnaire, QuestionnaireResponse, ServiceRequest } from "fhir/r4";
 
 export type legacy_MccTime = {
   value?: string;
@@ -221,12 +221,133 @@ export type legacy_Contact = {
 export type MccObservation = Observation
 export type MccCarePlan = CarePlan
 export type MccCondition = Condition
-export type MccPatientContact = PatientContact
+export type MccPatientContact = {
+  type: string,
+  role: string,
+  name: string,
+  hasImage: boolean,
+  phone: string,
+  email: string,
+  address: string,
+  relFhirId: string
+}
 export type MccGoal = Goal
 export type MccCounselingSummary = Procedure | ServiceRequest
 export type MccEducationSummary = Procedure | ServiceRequest
 export type MccReferralSummary = ServiceRequest
-export type MccMedication = Medication
+export type MccMedication = MedicationRequest
 export type MccPatient = Patient
 export type MccQuestionnaire = Questionnaire
 export type MccQuestionnaireResponse = QuestionnaireResponse
+export type MccGoalList = {
+  allGoals?: Array<MccGoalSummary>;
+  activeClinicalGoals?: Array<MccGoalSummary>;
+  inactiveClinicalGoals?: Array<MccGoalSummary>;
+  activePatientGoals?: Array<MccGoalSummary>;
+  inactivePatientGoals?: Array<MccGoalSummary>;
+  activeTargets?: Array<GoalTarget>;
+}
+export type MccGoalSummary = {
+  priority: string;
+  expressedByType: string;
+  description: string;
+  achievementStatus: CodeableConcept;
+  achievementText: string;
+  lifecycleStatus: string;
+  startDateText: string;
+  targetDateText?: string;
+  addresses: string;
+  expressedBy: string;
+  targets: {
+    measure: {
+      coding: {
+        system: string;
+        code: string;
+        display: string;
+      }[];
+      text: string;
+    };
+    value: {
+      valueType: string;
+      quantityValue: {
+        unit: string;
+        comparator?: string;
+        value: number;
+        system: string;
+        code: string;
+      };
+    };
+    dueType?: string;
+  }[];
+  useStartConcept?: boolean;
+  fhirid: string;
+}
+
+export type MccMedicationSummary = {
+  type: string;
+  fhirId: string;
+  status: string;
+  medication: string;
+  dosages: string;
+  requestedBy: string;
+  reasons: string;
+  effectiveDate: string;
+  refillsPermitted: string;
+  notes: string;
+}
+
+export type MccMedicationSummaryList = {
+  activeMedications: Array<MccMedicationSummary>;
+  inactiveMedications: Array<MccMedicationSummary>;
+}
+
+export type MccPatientSummary = {
+  race: string;
+  id: string;
+  fhirid: string;
+  gender: string;
+  age: string;
+  dateOfBirth: string;
+  ethnicity: string;
+  name: string;
+}
+
+export type MccConditionSummary = {
+  code: CodeableConcept;
+  categories: string;
+  history: {
+    code: CodeableConcept;
+    onset: string;
+    abatement: null;
+    clinicalStatus: string;
+    verificationStatus: string;
+    categories: string;
+    recorded: number;
+    note: string;
+    fhirid: string;
+    recordedAsText: string;
+  }[];
+  profileId: string;
+  firstRecorded: number | null;
+  firstRecordedAsText: string;
+  firstOnset: string;
+  clinicalStatus: string;
+  verificationStatus: string;
+}
+
+export type MccConditionList = {
+  activeConditions: Array<MccConditionSummary>;
+  inactiveConditions: Array<MccConditionSummary>;
+  activeConcerns: Array<MccConditionSummary>;
+  inactiveConcerns: Array<MccConditionSummary>;
+}
+
+export type MccSocialConcern = {
+  name: string;
+  data: string;
+  description: string | null;
+  date: string;
+  hovered: boolean;
+}
+
+export type PatientContactRole = PatientContact & { role: string }

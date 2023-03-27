@@ -29,7 +29,7 @@ npm link e-care-common-data-services
 - Release a tag, e.g `v1.0.0`
 - in mcc-provider or mcc-care-planner app, run
 ```
-npm i git@github.com:chronic-care/e-care-common-data-services.git#v1.0.0
+npm i ssh://git@github.com:XXGITHUB_ORG_NAMEXX/e-care-common-data-services.git#v1.0.0
 ```
 
 ## Code structure explanation
@@ -63,7 +63,7 @@ This is where we store our modules, inside will be having each module, e.g `obse
   This is where we put testing specific to observation
 
 #### mapping
-This is where we put resource mapping from fhir localised to our module, e.g on `vital-mapping` when we get `ckd`, we will try to query data for
+This is the where we put resource mapping from fhir localised to our module, e.g on `vital-mapping` when we get `ckd`, we will try to query data for
 - Cognitive Status (MoCA)
 - Fatigue (PROMIS T-score)
 - Functional Status (PROMIS raw score)

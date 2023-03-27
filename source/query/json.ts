@@ -36,14 +36,40 @@ export const getCodesFromValueSetCode = async (system: string, code: string) => 
     `../resources/valueset_loadlist.json`
   );
 
-
-  const valueSetsListParsed = await Promise.all(valueSetsList.map(async (v) => ({ fileName: v.Oid, valueSets: await import(`${v.Oid}.json`) })));
+  const valueSetsListParsed = valueSetsList ? await Promise.all(valueSetsList.default.map(async (v) => {
+    try {
+      const valueSets = await import(`../resources/${v.Oid}.json`)
+      return ({ fileName: v.Oid, valueSets: valueSets.default })
+    } catch (err) {
+      console.log({ errorValue: err })
+      return { fileName: v.Oid, valueSets: [] }
+    }
+  })) : [];
 
   const foundValueSets = valueSetsListParsed.filter(v => v.valueSets.some(v => v['System'] === system && v['Code'] === code));
 
-  const valueSetCodes = getAllCodes(foundValueSets[0].fileName)
+  const valueSetCodes = foundValueSets && foundValueSets[0] ? getAllCodes(foundValueSets[0].fileName) : []
 
   const joinedSetCodes = (await valueSetCodes).join(',');
 
   return joinedSetCodes;
+}
+
+export const getFilenameFromValueSetCode = async (system: string, code: string) => {
+  const valueSetsList = await import(
+    `../resources/valueset_loadlist.json`
+  );
+
+  const valueSetsListParsed = valueSetsList ? await Promise.all(valueSetsList.default.map(async (v) => {
+    try {
+      const valueSets = await import(`../resources/${v.Oid}.json`)
+      return ({ fileName: v.Oid, valueSets: valueSets.default })
+    } catch (err) {
+      return { fileName: v.Oid, valueSets: [] }
+    }
+  })) : [];
+
+  const foundValueSets = valueSetsListParsed.filter(v => v.valueSets.some(v => v['System'] === system && v['Code'] === code));
+
+  return foundValueSets && foundValueSets[0] ? foundValueSets[0].fileName : '';
 }

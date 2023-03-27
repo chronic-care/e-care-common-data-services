@@ -1,6 +1,8 @@
 import { CodeableConcept, Resource } from 'fhir/r4';
 import { fhirclient } from 'fhirclient/lib/types';
 
+import { MccGoal, MccGoalSummary } from '../../types/mcc-types';
+
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
 };
@@ -28,6 +30,18 @@ export const resourcesFromObject = (
   return resource;
 };
 
+export const resourcesFromObjectArray = (
+  response: fhirclient.JsonObject
+): Resource[] => {
+  const entries: fhirclient.JsonArray = response?.entry as fhirclient.JsonArray;
+
+  return entries
+    .map((entry: fhirclient.JsonObject) => entry?.resource as any)
+    .filter(
+      (resource: any) => resource.resourceType !== 'OperationOutcome'
+    )
+};
+
 export const resourcesFrom = (response: fhirclient.JsonArray): Resource[] => {
   const firstEntries = response[0] as fhirclient.JsonObject;
   const entries: fhirclient.JsonObject[] = firstEntries?.entry
@@ -49,3 +63,42 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
 
   return '';
 };
+
+export const transformToMccGoalSummary = (goal: MccGoal): MccGoalSummary => {
+  const priority = goal.priority?.coding[0]?.display || '';
+  const expressedByType = goal.expressedBy?.reference?.split('/')[0] || '';
+  const description = goal.description?.text || '';
+  const achievementStatus = goal.achievementStatus;
+  const achievementText = achievementStatus.text || '';
+  const lifecycleStatus = goal.lifecycleStatus || '';
+  const startDateText = goal.startDate ? new Date(goal.startDate).toLocaleDateString() : '';
+  const targetDateText = goal.target?.[0]?.dueDate ? new Date(goal.target[0].dueDate).toLocaleDateString() : undefined;
+  const addresses = goal.addresses?.[0]?.display || '';
+  const expressedBy = goal.expressedBy?.display || '';
+  const targets = goal.target?.map((target: any) => ({
+    measure: target.measure || { coding: [], text: '' },
+    value: {
+      valueType: 'Quantity',
+      quantityValue: target.detailQuantity || { unit: '', value: 0, system: '', code: '' },
+    },
+    dueType: target.dueDate ? 'date' : undefined,
+  })) || [];
+  const useStartConcept = !!goal.startCodeableConcept
+  const fhirid = goal.id || '';
+
+  return {
+    priority,
+    expressedByType,
+    description,
+    achievementStatus,
+    achievementText,
+    lifecycleStatus,
+    startDateText,
+    targetDateText,
+    addresses,
+    expressedBy,
+    targets,
+    useStartConcept,
+    fhirid,
+  };
+}

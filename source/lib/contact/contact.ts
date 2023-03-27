@@ -1,25 +1,55 @@
-import { Patient, PatientContact } from 'fhir/r4';
+import { CareTeamParticipant, Patient, Reference } from 'fhir/r4';
 import FHIR from 'fhirclient';
 
+import { MccCarePlan, MccPatientContact, PatientContactRole } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
+import { getCareplan } from '../careplan';
 
-export const getContacts = async (): Promise<PatientContact[]> => {
+import { transformToMccContact } from './contact.util';
+
+export const getContacts = async (carePlanId?: string): Promise<MccPatientContact[]> => {
   const client = await FHIR.oauth2.ready();
 
   const currentPatient: Patient = await client.patient.read();
 
-  const patientContacts: PatientContact[] = currentPatient.contact;
+  const patientContacts: PatientContactRole[] = [{ ...currentPatient, role: 'Patient' } as PatientContactRole];
+  log.debug({ serviceName: 'getContacts', result: { patientContacts: patientContacts, carePlanId } });
+
+  const contactCarePlan: MccCarePlan = await getCareplan(carePlanId);
+
+  if (contactCarePlan && Array.isArray(contactCarePlan.careTeam) && contactCarePlan.careTeam.length > 0) {
+    log.debug({ serviceName: 'getContacts', result: { referenceContact: contactCarePlan.careTeam[0].reference, carePlanId } });
+    try {
+      const contactCareTeamRequest = await client.request(
+        contactCarePlan.careTeam[0].reference
+      );
+      log.debug({ serviceName: 'getContacts', result: { contactCareTeamRequest: contactCareTeamRequest, carePlanId } });
+
+      const contactCareTeamDetail: PatientContactRole[] = await Promise.all((contactCareTeamRequest.participant as CareTeamParticipant[]).map(async (careTeam) => {
+        const careTeamDetail = await client.request((careTeam.member as Reference).reference);
+        return { ...careTeamDetail, role: careTeam.role[0].text };
+      }))
+
+      log.debug({ serviceName: 'getContacts', result: { contactCareTeamDetail: contactCareTeamDetail, carePlanId } });
+
+      // eslint-disable-next-line functional/immutable-data
+      patientContacts.push(...contactCareTeamDetail);
+
+    } catch (error) {
+      log.error({ serviceName: 'getContacts', result: { error: error, carePlanId } });
+    }
+  }
 
   const currentDate = new Date().toLocaleString();
 
   const activePatientContacts = patientContacts.filter(contact => {
     // is in period
-    if (contact.period.start) {
+    if (contact.period && contact.period.start) {
       if (currentDate.localeCompare(contact.period.start) < 0) {
         return false;
       }
     }
-    if (contact.period.end) {
+    if (contact.period && contact.period.end) {
       if (currentDate.localeCompare(contact.period.end) > 0) {
         return false;
       }
@@ -27,18 +57,8 @@ export const getContacts = async (): Promise<PatientContact[]> => {
     return true;
   })
 
-  // TODO:
-  /*
-  check for general practicioner, map it to contact
+  const mappedPatientContacts = activePatientContacts.map(contact => transformToMccContact(contact));
 
-  search for careplan id
-  get care team and map it to contact
-
-  map activepatientcontact to contact
-
-  return contact
-  */
-
-  log.debug({ serviceName: 'getContacts', result: activePatientContacts });
-  return activePatientContacts;
+  log.debug({ serviceName: 'getContacts', result: { contacts: mappedPatientContacts, carePlanId } });
+  return mappedPatientContacts;
 };

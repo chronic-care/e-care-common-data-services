@@ -9,7 +9,7 @@ import {
   resourcesFrom,
 } from './referral.util';
 
-export const getSummaryReferrals = async (): Promise<MccReferralSummary[]> => {
+export const getSummaryReferrals = async (careplanId?: string): Promise<MccReferralSummary[]> => {
   const client = await FHIR.oauth2.ready();
 
   const queryPath = `ServiceRequest?category=440379008,3457005,409073007,409063005`;
@@ -27,7 +27,7 @@ export const getSummaryReferrals = async (): Promise<MccReferralSummary[]> => {
   );
   // merged both conditions array, TODO: to add categorisation based on valueset
   const summaryReferral = [...filteredReferral1]
-  log.debug({ serviceName: 'getSummaryReferral', result: summaryReferral });
+  log.debug({ serviceName: 'getSummaryReferral', result: { summaryReferral, careplanId } });
 
   return summaryReferral;
 };

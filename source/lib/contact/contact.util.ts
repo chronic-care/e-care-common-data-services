@@ -1,6 +1,8 @@
 import { CodeableConcept, Resource } from 'fhir/r4';
 import { fhirclient } from 'fhirclient/lib/types';
 
+import { MccPatientContact, PatientContactRole } from '../../types/mcc-types';
+
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
 };
@@ -49,3 +51,19 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
 
   return '';
 };
+
+export const transformToMccContact = (contact: PatientContactRole): MccPatientContact => {
+  const address = contact.address ? `${contact.address[0].line[0]} ${contact.address[0].city} ${contact.address[0].state} ${contact.address[0].postalCode} ${contact.address[0].country}` : '';
+  const relation = contact.role === 'Patient' ? `${contact.role}/${contact.id}` : (contact as any).patient ? (contact as any).patient.reference : ''
+  const name = contact.name[0].use === 'usual' ? `${contact.name[0].given[0]} ${contact.name[0].family}` : contact.name[0].text;
+  return {
+    type: 'person',
+    role: contact.role,
+    name: name,
+    hasImage: false,
+    phone: contact.telecom[0].value,
+    email: contact.telecom[1].value,
+    address: address,
+    relFhirId: relation,
+  };
+}

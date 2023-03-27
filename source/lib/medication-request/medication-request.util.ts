@@ -28,6 +28,18 @@ export const resourcesFromObject = (
   return resource;
 };
 
+export const resourcesFromObjectArray = (
+  response: fhirclient.JsonObject
+): Resource[] => {
+  const entries: fhirclient.JsonArray = response?.entry as fhirclient.JsonArray;
+
+  return entries
+    .map((entry: fhirclient.JsonObject) => entry?.resource as any)
+    .filter(
+      (resource: any) => resource.resourceType !== 'OperationOutcome'
+    )
+};
+
 export const resourcesFrom = (response: fhirclient.JsonArray): Resource[] => {
   const firstEntries = response[0] as fhirclient.JsonObject;
   const entries: fhirclient.JsonObject[] = firstEntries?.entry

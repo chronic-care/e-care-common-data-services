@@ -1,6 +1,8 @@
 import { CodeableConcept, Resource } from 'fhir/r4';
 import { fhirclient } from 'fhirclient/lib/types';
 
+import { MccPatient, MccPatientSummary } from '../../types/mcc-types';
+
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
 };
@@ -49,3 +51,25 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
 
   return '';
 };
+
+export const transformToPatientSummary = (patient: MccPatient): MccPatientSummary => {
+  const raceExtension = patient.extension.find(ext => ext.url.includes('StructureDefinition/us-core-race'));
+  const race = raceExtension ? raceExtension.extension.find(ext => ext.url === "text")?.valueString : undefined;
+
+  const id = patient.identifier.find(id => id.system.includes('NamingSystem/identifier'))?.value;
+  const fhirid = patient.id;
+
+  const gender = patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1);
+
+  const dob = new Date(patient.birthDate);
+  const ageDiffMs = Date.now() - dob.getTime();
+  const ageDate = new Date(ageDiffMs);
+  const age = Math.abs(ageDate.getUTCFullYear() - 1970).toString();
+
+  const ethnicityExtension = patient.extension.find(ext => ext.url === "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity");
+  const ethnicity = ethnicityExtension ? ethnicityExtension.extension.find(ext => ext.url === "text")?.valueString : undefined;
+
+  const name = patient.name[0].text;
+
+  return { race, id, fhirid, gender, age, dateOfBirth: dob.toLocaleDateString(), ethnicity, name }
+}

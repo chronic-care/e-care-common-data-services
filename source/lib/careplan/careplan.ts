@@ -2,6 +2,7 @@ import { CarePlan, Condition } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import { fhirclient } from 'fhirclient/lib/types';
 
+import { MccCarePlan, MccCondition } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
 
 import {
@@ -12,7 +13,7 @@ import {
   resourcesFromObject,
 } from './careplan.util';
 
-export const getCareplans = async (sort?: string, max?: string): Promise<CarePlan[]> => {
+export const getCareplans = async (sort?: string, max?: string): Promise<MccCarePlan[]> => {
   const sortType = sort === 'descending' ? '-date' : 'date';
 
   const client = await FHIR.oauth2.ready();
@@ -22,9 +23,9 @@ export const getCareplans = async (sort?: string, max?: string): Promise<CarePla
     queryPath
   );
 
-  const filteredCareplans: CarePlan[] = resourcesFrom(
+  const filteredCareplans: MccCarePlan[] = resourcesFrom(
     careplanRequest
-  ) as CarePlan[];
+  ) as MccCarePlan[];
 
   log.info(
     `getCareplans - successful with status ${filteredCareplans[0]?.status}`
@@ -33,10 +34,10 @@ export const getCareplans = async (sort?: string, max?: string): Promise<CarePla
   return filteredCareplans;
 };
 
-export const getCareplan = async (id: string): Promise<CarePlan> => {
+export const getCareplan = async (id: string): Promise<MccCarePlan> => {
   if (!id) {
     log.error('getCareplan - id not found');
-    return notFoundResponse as unknown as CarePlan;
+    return notFoundResponse as unknown as MccCarePlan;
   }
 
   const client = await FHIR.oauth2.ready();
@@ -46,9 +47,9 @@ export const getCareplan = async (id: string): Promise<CarePlan> => {
     queryPath
   );
 
-  const filteredCareplan: CarePlan = resourcesFromObject(
+  const filteredCareplan: MccCarePlan = resourcesFromObject(
     careplanRequest
-  ) as CarePlan;
+  ) as MccCarePlan;
 
   log.info(
     `getCareplan - successful with id ${id} - with status ${filteredCareplan?.status}`
@@ -60,7 +61,7 @@ export const getCareplan = async (id: string): Promise<CarePlan> => {
 export const getCareplansByStatusAndCategory = async (
   status: string,
   category: string[],
-): Promise<CarePlan[]> => {
+): Promise<MccCarePlan[]> => {
   if (!status || !category) {
     log.error('getCareplansByStatusAndCategory - status or category not found');
     return [notFoundResponse] as unknown as CarePlan[];
@@ -74,9 +75,9 @@ export const getCareplansByStatusAndCategory = async (
     queryPath
   );
 
-  const filteredCareplans: CarePlan[] = resourcesFrom(
+  const filteredCareplans: MccCarePlan[] = resourcesFrom(
     careplanRequest
-  ) as CarePlan[];
+  ) as MccCarePlan[];
 
   log.info(
     `getCareplansByStatusAndCategory - successful with pre-response ${filteredCareplans[0]?.toString()} - with status ${filteredCareplans[0]?.status}`
@@ -85,10 +86,10 @@ export const getCareplansByStatusAndCategory = async (
   return filteredCareplans;
 };
 
-export const getConditionFromUrl = async (urlPath: string): Promise<Condition> => {
+export const getConditionFromUrl = async (urlPath: string): Promise<MccCondition> => {
   if (!urlPath) {
     log.error('getCondition - urlPath not found');
-    return {} as unknown as Condition;
+    return {} as unknown as MccCondition;
   }
 
   const client = await FHIR.oauth2.ready();
@@ -100,9 +101,9 @@ export const getConditionFromUrl = async (urlPath: string): Promise<Condition> =
     queryPath
   );
 
-  const filteredCondition: Condition = resourcesFromObject(
+  const filteredCondition: MccCondition = resourcesFromObject(
     conditionRequest
-  ) as Condition;
+  ) as MccCondition;
 
   log.info(`getCondition - successful with urlPath ${urlPath}`);
   log.debug({ serviceName: 'getCondition', result: filteredCondition });
@@ -112,10 +113,10 @@ export const getConditionFromUrl = async (urlPath: string): Promise<Condition> =
 export const getBestCareplan = async (
   subject: string,
   matchScheme?: string
-): Promise<CarePlan[]> => {
+): Promise<MccCarePlan[]> => {
   if (!subject) {
     log.error('getBestCareplan - subject not found');
-    return [] as CarePlan[];
+    return [] as MccCarePlan[];
   }
 
   const matchSchemeParam = matchScheme ?? 'profiles';
@@ -129,11 +130,11 @@ export const getBestCareplan = async (
     fhirOptions
   );
 
-  const careplanResource: CarePlan[] = resourcesFrom(
+  const careplanResource: MccCarePlan[] = resourcesFrom(
     careplanRequest
-  ) as CarePlan[];
+  ) as MccCarePlan[];
 
-  const filteredCareplans: CarePlan[] = careplanResource.filter(
+  const filteredCareplans: MccCarePlan[] = careplanResource.filter(
     (v) =>
       v !== undefined && v.resourceType === 'CarePlan' && v.status === 'active'
     // filter for address condition not needed by mcc-provider
@@ -142,7 +143,7 @@ export const getBestCareplan = async (
   // fallback
   if (!filteredCareplans.length) {
     log.error('getBestCareplan - empty careplan');
-    return [{ id: 'NOID' }] as CarePlan[];
+    return [{ id: 'NOID' }] as MccCarePlan[];
   }
 
   // sorting
@@ -182,8 +183,8 @@ export const getBestCareplan = async (
   });
 
   // filter out addresses by condition reference
-  const responseCarePlans: CarePlan[] = await Promise.all(
-    filteredCareplans.map(async (careplan: CarePlan) => {
+  const responseCarePlans: MccCarePlan[] = await Promise.all(
+    filteredCareplans.map(async (careplan: MccCarePlan) => {
       const addresses = await Promise.all(
         careplan.addresses.map(async (address) => {
           const condition: Condition = await getConditionFromUrl(address.reference);
@@ -204,4 +205,28 @@ export const getBestCareplan = async (
   );
   log.debug({ serviceName: 'getBestCareplan', result: responseCarePlans });
   return responseCarePlans;
+};
+
+// TODO: supported careplan with valueset integration on profilemap
+export const getSupportedCarePlans = async (sort?: string, max?: string): Promise<MccCarePlan[]> => {
+  const sortType = sort === 'descending' ? '-date' : 'date';
+
+  const client = await FHIR.oauth2.ready();
+
+  const queryPath = `CarePlan?&_sort=${sortType}&_count=${max ?? 100}`;
+  const careplanRequest: fhirclient.JsonArray = await client.patient.request(
+    queryPath
+  );
+
+  const filteredCareplans: MccCarePlan[] = resourcesFrom(
+    careplanRequest
+  ) as MccCarePlan[];
+
+  const activeCareplans = filteredCareplans.filter((carePlan => carePlan.status === 'active'))
+
+  log.info(
+    `getSupportedCarePlans - successful with status ${activeCareplans[0]?.status}`
+  );
+  log.debug({ serviceName: 'getSupportedCarePlans', result: activeCareplans });
+  return activeCareplans;
 };

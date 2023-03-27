@@ -1,6 +1,8 @@
 import { CodeableConcept, Resource } from 'fhir/r4';
 import { fhirclient } from 'fhirclient/lib/types';
 
+import { MccCondition, MccSocialConcern } from '../../types/mcc-types';
+
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
 };
@@ -28,6 +30,18 @@ export const resourcesFromObject = (
   return resource;
 };
 
+export const resourcesFromObjectArray = (
+  response: fhirclient.JsonObject
+): Resource[] => {
+  const entries: fhirclient.JsonArray = response?.entry as fhirclient.JsonArray;
+
+  return entries
+    .map((entry: fhirclient.JsonObject) => entry?.resource as any)
+    .filter(
+      (resource: any) => resource.resourceType !== 'OperationOutcome'
+    )
+};
+
 export const resourcesFrom = (response: fhirclient.JsonArray): Resource[] => {
   const firstEntries = response[0] as fhirclient.JsonObject;
   const entries: fhirclient.JsonObject[] = firstEntries?.entry
@@ -49,3 +63,13 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
 
   return '';
 };
+
+export const transformToSocialConcern = (condition: MccCondition): MccSocialConcern => {
+  return {
+    name: condition.code.text,
+    data: condition.clinicalStatus && condition.clinicalStatus.coding[0] ? condition.clinicalStatus.coding[0].code : '',
+    description: null,
+    date: condition.onsetDateTime ? new Date(condition.onsetDateTime).toLocaleDateString() : null,
+    hovered: false,
+  };
+}

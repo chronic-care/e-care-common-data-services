@@ -125,7 +125,7 @@ export const getObservationsByValueSet = async (
     `getObservationsByValueSet - start with valueSet - ${valueSet} - ${sort} ${max}`
   );
 
-  const queryPath = `Observation?${EccMode.code}=${combinedCodes}&_sort=${sortType}&_count=${max}`;
+  const queryPath = `Observation?${EccMode.code}=${combinedCodes}&_sort=${sortType}${max ? `&_count=${max}` : ''}`;
   const observationRequest: fhirclient.JsonArray = await client.patient.request(
     queryPath,
     fhirOptions
@@ -252,7 +252,7 @@ export const getLatestObservation = async (code: string, translate: boolean, mod
   return filteredObservations[0];
 };
 
-export const getObservationsSegmented = async (valueSet: string, max: number, sort: string, mode: string): Promise<legacy_MccObservationCollection> => {
+export const getObservationsSegmented = async (valueSet: string, max?: number, sort?: string, mode?: string, unit?: string): Promise<legacy_MccObservationCollection> => {
   if (!valueSet) {
     log.error('getObservationsSegmented - valueSet not found');
     return {
@@ -276,10 +276,10 @@ export const getObservationsSegmented = async (valueSet: string, max: number, so
   const sortType = sort === 'ascending' ? 'date' : '-date';
 
   log.info(
-    `getObservationsSegmented - start with valueSet - ${valueSet} - ${sort} ${max}`
+    `getObservationsSegmented - start with valueSet - ${valueSet} - ${sort} ${max} - ${unit}`
   );
 
-  const queryPath = `Observation?${mode ?? EccMode.code}=${combinedCodes}&_sort=${sortType}&_count=${max}`;
+  const queryPath = `Observation?${mode ?? EccMode.code}=${combinedCodes}&_sort=${sortType}${max ? `&_count=${max}` : ''}`;
   const observationRequest: fhirclient.JsonArray = await client.patient.request(
     queryPath,
     fhirOptions

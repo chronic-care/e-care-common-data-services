@@ -9,7 +9,7 @@ import {
   resourcesFrom,
 } from './counseling.util';
 
-export const getSummaryCounselings = async (): Promise<MccCounselingSummary[]> => {
+export const getSummaryCounselings = async (careplanId?: string): Promise<MccCounselingSummary[]> => {
   const client = await FHIR.oauth2.ready();
 
   const queryPath1 = `Procedure?category=409063005`;
@@ -37,7 +37,7 @@ export const getSummaryCounselings = async (): Promise<MccCounselingSummary[]> =
   );
   // merged both conditions array, TODO: to add categorisation based on valueset
   const summaryCounselings = [...filteredCounseling1, ...filteredCounseling2]
-  log.debug({ serviceName: 'getSummaryCounselings', result: summaryCounselings });
+  log.debug({ serviceName: 'getSummaryCounselings', result: { summaryCounselings, careplanId } });
 
   return summaryCounselings;
 };
