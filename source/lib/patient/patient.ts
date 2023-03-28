@@ -1,3 +1,4 @@
+import { DomainResource } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import { fhirclient } from 'fhirclient/lib/types';
 
@@ -54,4 +55,15 @@ export const getPatient = async (id: string): Promise<MccPatientSummary> => {
   );
   log.debug({ serviceName: 'getPatient', result: filteredPatient });
   return transformToPatientSummary(filteredPatient);
+};
+
+import {
+  fhirOptions,
+} from './patient.util';
+
+
+export const getReference = async (theReference: string): Promise<DomainResource> => {
+  // return client.request(theReference, fhirOptions)
+  const client = await FHIR.oauth2.ready();
+  return client.request(theReference, fhirOptions);
 };
