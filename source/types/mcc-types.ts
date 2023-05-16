@@ -247,40 +247,55 @@ export type MccGoalList = {
   inactivePatientGoals?: Array<MccGoalSummary>;
   activeTargets?: Array<GoalTarget>;
 }
+
+
+export type MccCoding = {
+  system?: string;
+  version?: string;
+  code: string;
+  display?: string;
+}
+
+export type MccCodeableConcept = {
+  coding?: Array<MccCoding>;
+  text: string;
+}
+
+export type MccReference = {
+  reference?: string;
+  display?: string;
+  type?: string;
+}
+
+export type Acceptance = {
+  individual?: MccReference;
+  code?: string;
+  priority?: MccCodeableConcept;
+}
+
+export type MccGoalRelationship = {
+  target: MccReference;
+  type: MccCodeableConcept;
+}
+
 export type MccGoalSummary = {
   priority: string;
-  expressedByType: string;
+  expressedByType?: string;
   description: string;
-  achievementStatus: CodeableConcept;
-  achievementText: string;
+  achievementStatus?: MccCodeableConcept;
+  achievementText?: string;
   lifecycleStatus: string;
-  startDateText: string;
+  startDateText?: string;
   targetDateText?: string;
-  addresses: string;
-  expressedBy: string;
-  targets: {
-    measure: {
-      coding: {
-        system: string;
-        code: string;
-        display: string;
-      }[];
-      text: string;
-    };
-    value: {
-      valueType: string;
-      quantityValue: {
-        unit: string;
-        comparator?: string;
-        value: number;
-        system: string;
-        code: string;
-      };
-    };
-    dueType?: string;
-  }[];
-  useStartConcept?: boolean;
-  fhirid: string;
+  addresses?: Array<MccReference>;
+  expressedBy?: string;
+  acceptance?: Acceptance;
+  targets?: Array<GoalTarget>;
+  fhirid?: string;
+  server?: string;
+  relatedGoals?: Array<MccGoalRelationship>;
+  notes?: Array<string>;
+  mostrecentresult?: string;
 }
 
 export type MccMedicationSummary = {

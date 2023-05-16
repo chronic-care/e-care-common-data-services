@@ -73,7 +73,7 @@ export const transformToMccGoalSummary = (goal: MccGoal): MccGoalSummary => {
   const lifecycleStatus = goal.lifecycleStatus || '';
   const startDateText = goal.startDate ? new Date(goal.startDate).toLocaleDateString() : '';
   const targetDateText = goal.target?.[0]?.dueDate ? new Date(goal.target[0].dueDate).toLocaleDateString() : undefined;
-  const addresses = goal.addresses?.[0]?.display || '';
+  // const addresses = goal.addresses?.[0]?.display || '';
   const expressedBy = goal.expressedBy?.display || '';
   const targets = goal.target?.map((target: any) => ({
     measure: target.measure || { coding: [], text: '' },
@@ -83,22 +83,22 @@ export const transformToMccGoalSummary = (goal: MccGoal): MccGoalSummary => {
     },
     dueType: target.dueDate ? 'date' : undefined,
   })) || [];
-  const useStartConcept = !!goal.startCodeableConcept
+  // const useStartConcept = !!goal.startCodeableConcept
   const fhirid = goal.id || '';
 
   return {
     priority,
     expressedByType,
     description,
-    achievementStatus,
+    // achievementStatus,
     achievementText,
     lifecycleStatus,
     startDateText,
     targetDateText,
-    addresses,
+    // addresses,
     expressedBy,
     targets,
-    useStartConcept,
+    // useStartConcept,
     fhirid,
   };
 }
