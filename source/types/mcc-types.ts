@@ -365,4 +365,19 @@ export type MccSocialConcern = {
   hovered: boolean;
 }
 
+
+
+export type MccServiceRequestSummary = {
+  topic: MccCodeableConcept;
+  type: string;
+  displayDate?: string;
+  date?: string;
+  outcome?: MccCodeableConcept;
+  status: string;
+  performer?: string;
+  reasons?: string;
+  fhirid?: string;
+}
+
+
 export type PatientContactRole = PatientContact & { role: string }
