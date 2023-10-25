@@ -246,6 +246,7 @@ export type MccGoalList = {
   activePatientGoals?: Array<MccGoalSummary>;
   inactivePatientGoals?: Array<MccGoalSummary>;
   activeTargets?: Array<GoalTarget>;
+  sdsPatientGoals?: Array<MccGoalSummary>;
 }
 
 
