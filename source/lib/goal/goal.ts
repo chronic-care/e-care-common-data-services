@@ -62,28 +62,15 @@ export const getSummaryGoals = async (): Promise<MccGoalList> => {
     queryPath
   );
 
-  const sdsClient: Client = await getSupplementalDataClient();
+  // const sdsClient: Client = await getSupplementalDataClient();
 
-  console.error('sdsGoalRequest ***************************');
-  console.error('sdsGoalRequest client ' + JSON.stringify(client));
-  console.error('sdsGoalRequest sdsClient ' + JSON.stringify(sdsClient));
-  console.error('sdsGoalRequest ***************************');
-
-  const sdsGoalRequest2: fhirclient.JsonObject = await sdsClient.patient.request(
-    queryPath
-  );
+  // const sdsGoalRequest2: fhirclient.JsonObject = await sdsClient.patient.request(
+  //   queryPath
+  // );
 
   const sdsGoalRequest: fhirclient.JsonObject = await client.patient.request(
     queryPath
   );
-
-
-  console.error('sdsGoalRequest ***************************');
-  console.error('sdsGoalRequest client ' + JSON.stringify(client));
-  console.error('sdsGoalRequest sdsClient ' + JSON.stringify(sdsClient));
-  console.error('let sdsGoalRequest2 ' + JSON.stringify(sdsGoalRequest2));
-  console.error('sdsGoalRequest ***************************');
-
 
 
   // goal from problem list item
