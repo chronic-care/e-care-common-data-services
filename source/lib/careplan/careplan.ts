@@ -124,7 +124,7 @@ export const getBestCareplan = async (
   const client = await FHIR.oauth2.ready();
 
   log.info(`getBestCareplan - start with subject - ${subject}`);
-  const queryPath = `CarePlan?subject=${subject}`;
+  const queryPath = `CarePlan?subject=${subject}&category=38717003`;
   const careplanRequest: fhirclient.JsonArray = await client.patient.request(
     queryPath,
     fhirOptions

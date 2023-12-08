@@ -17,11 +17,11 @@ export const notFoundResponse = (code?: string) => ({
 export const resourcesFromObject = (
   response: fhirclient.JsonObject
 ): Resource => {
-  const entry: fhirclient.JsonObject = response?.entry[0];
+  const entry: fhirclient.JsonObject = response?.entry ? response?.entry[0] : undefined;
 
-  const resource: any = entry?.resource;
+  const resource: any = entry ? entry?.resource : undefined;
 
-  if (resource.resourceType === 'OperationOutcome') {
+  if (resource && resource.resourceType === 'OperationOutcome') {
     return {} as any;
   }
 
