@@ -56,13 +56,13 @@ export const getSummaryMedicationRequests = async (careplanId?: string): Promise
       type: mc.resourceType,
       fhirId: mc.id,
       status: mc.status,
-      medication: mc.medicationCodeableConcept.text,
+      medication: mc.medicationCodeableConcept ? mc.medicationCodeableConcept.text : '',
       dosages: mc.dosageInstruction ? mc.dosageInstruction[0].text : '',
-      requestedBy: mc.requester.display,
-      reasons: getConceptDisplayString(condition.code),
-      effectiveDate: new Date(mc.authoredOn).toLocaleDateString(),
+      requestedBy: mc.requester ? mc.requester.display : '',
+      reasons: condition ? getConceptDisplayString(condition.code) : '',
+      effectiveDate: mc.authoredOn ? new Date(mc.authoredOn).toLocaleDateString() : '',
       refillsPermitted: 'Unknown',
-      notes: convertNoteToString(mc.note)
+      notes: mc.note ? convertNoteToString(mc.note) : '',
     }
   }))
 
