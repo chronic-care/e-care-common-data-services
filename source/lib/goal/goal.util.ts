@@ -64,8 +64,7 @@ export const transformToMccGoalSummary = (goal: MccGoal): MccGoalSummary => {
   const priority = goal.priority?.coding[0]?.display || '';
   const expressedByType = goal.expressedBy?.reference?.split('/')[0] || '';
   const description = goal.description?.text || '';
-  const achievementStatus = goal.achievementStatus;
-  const achievementText = achievementStatus.text || '';
+  const achievementText = goal.achievementStatus?.text || '';
   const lifecycleStatus = goal.lifecycleStatus || '';
   const startDateText = goal.startDate ? new Date(goal.startDate).toLocaleDateString() : '';
   const targetDateText = goal.target?.[0]?.dueDate ? new Date(goal.target[0].dueDate).toLocaleDateString() : undefined;
