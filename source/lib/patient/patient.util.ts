@@ -75,5 +75,5 @@ export const transformToPatientSummary = (patient: MccPatient): MccPatientSummar
 
   const name = patient.name ? patient.name[0].text : '';
 
-  return { race, id, fhirid, gender, age, dateOfBirth: dob.toLocaleDateString(), ethnicity, name }
+  return { race, id, fhirid, gender, age, dateOfBirth: patient.birthDate, ethnicity, name }
 }

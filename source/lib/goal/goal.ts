@@ -1,5 +1,5 @@
 /* eslint-disable functional/immutable-data */
-import localForage from 'localforage'
+// import localForage from 'localforage'
 import { GoalTarget, Resource } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import Client from 'fhirclient/lib/Client';
@@ -9,10 +9,12 @@ import { MccGoal, MccGoalList, MccGoalSummary } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
 
 import {
+  getSupplementalDataClient,
   notFoundResponse,
   resourcesFrom,
   resourcesFromObject,
   resourcesFromObjectArray,
+  saveFHIRAccessData,
   transformToMccGoalSummary,
 } from './goal.util';
 
@@ -43,11 +45,6 @@ const ACTIVE_KEYS = {
 
 export const getSummaryGoals = async (): Promise<MccGoalList> => {
   const client: Client = await FHIR.oauth2.ready();
-
-  await saveFHIRAccessData(fcCurrentStateKey, client.state).then(() => {
-    console.log('fhirClientState saved/promise returned')
-  }).catch((e) => console.log(e))
-
   const allGoals: MccGoalSummary[] = [];
   const activePatientGoals: MccGoalSummary[] = [];
   const activeClinicalGoals: MccGoalSummary[] = [];
@@ -62,7 +59,7 @@ export const getSummaryGoals = async (): Promise<MccGoalList> => {
     queryPath
   );
 
-  // const sdsClient: Client = await getSupplementalDataClient();
+
 
   // const sdsGoalRequest2: fhirclient.JsonObject = await sdsClient.patient.request(
   //   queryPath
@@ -147,96 +144,23 @@ export const getSummaryGoals = async (): Promise<MccGoalList> => {
 /*
 * TODO: enhance this to verify current access token for SDS.
 */
-export const supplementalDataIsAvailable = (): Boolean => {
-  const authURL = process.env.REACT_APP_SHARED_DATA_AUTH_ENDPOINT
-  const sdsURL = process.env.REACT_APP_SHARED_DATA_ENDPOINT
-  const sdsScope = process.env.REACT_APP_SHARED_DATA_SCOPE
 
-  return authURL !== undefined && authURL?.length > 0
-    && sdsURL !== undefined && sdsURL?.length > 0
-    && sdsScope !== undefined && sdsScope?.length > 0
-}
-
-const saveFHIRAccessData = async (key: string, data: any): Promise<any> => {
-  if (data.expiresAt && data.serverUrl && data.clientId) {
-    console.log(`Object: localForage.setItem(key: ${key}, data: <see next line>`, data)
-    return await localForage.setItem(key, data as fhirclient.ClientState)
-  } else {
-    console.log('Ignore previous logs, NOT updating data in local storage:')
-    console.log('Data is missing data.expiresAt || data.serverUrl || data.clientId')
-  }
-}
-
-export const getSupplementalDataClient = async (): Promise<Client | undefined> => {
-
-  let sdsClient2: Client | undefined
-  // const sdsURL = 'https://gw.interop.community/SyntheaTest8/data'
-  const sdsURL = 'https://gw.interop.community/eCareSharedData/data'
-  const authURL = 'https://gw.interop.community/SyntheaTest8/data'
-  // const sdsScope = 'launch openid fhirUser patient/*.read'
-  const sdsScope = 'patient/*.read openid launch'
-
-  if (authURL && sdsURL && sdsScope) {
-    const authFhirAccessDataObject: fhirclient.ClientState | undefined =
-      await extractFhirAccessDataObjectIfGivenEndpointMatchesAnyPriorEndpoint(authURL)
-
-
-    if (authFhirAccessDataObject) {
-
-      var sdsFhirAccessDataObject = authFhirAccessDataObject
-      sdsFhirAccessDataObject.serverUrl = sdsURL
-      sdsFhirAccessDataObject.scope = sdsScope
-      if (sdsFhirAccessDataObject.tokenResponse) {
-        sdsFhirAccessDataObject.tokenResponse.scope = sdsScope
-      }
-      sdsClient2 = FHIR.client(sdsFhirAccessDataObject)
-    }
-    else {
-      console.log("SupplementalDataClient() authFhirAccessDataObject is null, cannot connect to client")
-    }
-  }
-
-  return sdsClient2
-}
-
-
-export const extractFhirAccessDataObjectIfGivenEndpointMatchesAnyPriorEndpoint =
-  async (givenEndpoint: string): Promise<fhirclient.ClientState | undefined> => {
-    console.log(givenEndpoint)
-    const arrayOfFhirAccessDataObjects: fhirclient.ClientState = await getFHIRAccessData(fcCurrentStateKey) as fhirclient.ClientState
-    console.log('arrayOfFhirAccessDataObjects:', JSON.stringify(arrayOfFhirAccessDataObjects))
-    return arrayOfFhirAccessDataObjects;
-  }
-
-
-const isFHIRAccessData = async (key: string): Promise<boolean> => {
-  try {
-    const data: any = await localForage.getItem(key)
-    // If the key does not exist, getItem() in the localForage API will return null specifically to indicate it
-    if (data !== null) {
-      return true
-    }
-    return false
-  } catch (e) {
-    console.log(`Failure calling localForage.getItem(key) from persistenceService.isFHIRAccessData: ${e}`)
-    return false
-  }
-}
-
-
-const getFHIRAccessData = async (key: string): Promise<any> => {
-  try {
-    const isData: boolean = await isFHIRAccessData(key)
-    if (isData) {
-      return await localForage.getItem(key)
-    }
-  } catch (e) {
-    console.error(`Failure calling isFHIRAccessData(key) from persistenceService.getFHIRAccessData: ${e}`)
-  }
-}
 
 export const getGoals = async (): Promise<MccGoal[]> => {
   const client = await FHIR.oauth2.ready();
+
+  console.error('start saveFHIRAccessData');
+
+  await saveFHIRAccessData(fcCurrentStateKey, client.state, false).then(() => {
+    console.log('fhirClientState saved/promise returned')
+  }).catch((e) => console.log(e))
+
+  console.error('end saveFHIRAccessData');
+
+  const sdsClient: Client = await getSupplementalDataClient();
+  console.error(
+    `getGoals - ` + JSON.stringify(sdsClient)
+  );
 
   const queryPath = `Goal`;
   const goalRequest: fhirclient.JsonArray = await client.patient.request(

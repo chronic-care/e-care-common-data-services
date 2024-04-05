@@ -174,11 +174,10 @@ export const getObservationsByCategory = async (
     `getObservationsByCategory - start with category - ${category} - ${sort} ${max}`
   );
 
-  const queryPath = `Observation?category=${category}
-    ${sortType ? `&_sort=` : ''}
-    ${max ? `&_count=${max}` : ''}
-    ${date ? `&date=${date}` : ''}
-  `;
+  const queryPath = `Observation?category=${category}${sortType ? `&_sort=${sortType}` : ''}${max ? `&_count=${max}` : ''}${date ? `&date=${date}` : ''}`;
+  console.debug('getObservationsByCategory >>>' + queryPath + '<<<<');
+
+
   const observationRequest: fhirclient.JsonArray = await client.patient.request(
     queryPath,
     fhirOptions
