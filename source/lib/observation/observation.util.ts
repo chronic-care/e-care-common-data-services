@@ -3,6 +3,7 @@ import { Annotation, CodeableConcept, Observation, Resource, TimingRepeat } from
 import { fhirclient } from 'fhirclient/lib/types';
 
 import { legacy_MccCodeableConcept, legacy_MccCoding, legacy_MccDateTime, legacy_MccObservation, legacy_MccObservationCollection, legacy_MccObservationComponent, legacy_MccTime, ReferenceRange, Repeat } from '../../types/mcc-types';
+import { displayDate } from '../service-request/service-request.util';
 
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
@@ -152,18 +153,18 @@ export const convertToMccObservation = (observation: Observation): legacy_MccObs
     effective: {
       dateTime: {
         rawDate: observation.effectiveDateTime,
-        date: observation.effectiveDateTime
+        date: displayDate(observation.effectiveDateTime)
       },
       instant: {
         value: observation.effectiveInstant
       },
       period: {
         start: {
-          date: observation.effectivePeriod.start,
+          date: displayDate(observation.effectivePeriod.start),
           rawDate: observation.effectivePeriod.start
         },
         end: {
-          date: observation.effectivePeriod.end,
+          date: displayDate(observation.effectivePeriod.end),
           rawDate: observation.effectivePeriod.end
         }
       },

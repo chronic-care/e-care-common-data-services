@@ -4,6 +4,7 @@ import FHIR from 'fhirclient'
 import Client from 'fhirclient/lib/Client'
 import { MccGoal, MccGoalSummary } from '../../types/mcc-types';
 import localForage from 'localforage'
+import { displayDate } from '../service-request/service-request.util';
 // import { fhirclient } from 'fhirclient/lib/types'
 
 const LF_ID = '-MCP'
@@ -213,8 +214,8 @@ export const transformToMccGoalSummary = (goal: MccGoal): MccGoalSummary => {
   const description = goal.description?.text || '';
   const achievementText = goal.achievementStatus?.text || '';
   const lifecycleStatus = goal.lifecycleStatus || '';
-  const startDateText = goal.startDate ? new Date(goal.startDate).toLocaleDateString() : '';
-  const targetDateText = goal.target?.[0]?.dueDate ? new Date(goal.target[0].dueDate).toLocaleDateString() : undefined;
+  const startDateText = goal.startDate ? displayDate(goal.startDate) : '';
+  const targetDateText = goal.target?.[0]?.dueDate ? displayDate(goal.target[0].dueDate) : undefined;
   // const addresses = goal.addresses?.[0]?.display || '';
   const expressedBy = goal.expressedBy?.display || '';
   const targets = goal.target?.map((target: any) => ({

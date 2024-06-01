@@ -7,6 +7,7 @@ import { MccMedication, MccMedicationSummary, MccMedicationSummaryList } from '.
 import log from '../../utils/loglevel';
 import { getConditionFromUrl } from '../careplan';
 import { convertNoteToString } from '../observation/observation.util';
+import { displayDate } from '../service-request/service-request.util';
 
 import {
   getConceptDisplayString,
@@ -56,11 +57,11 @@ export const getSummaryMedicationRequests = async (careplanId?: string): Promise
       type: mc.resourceType,
       fhirId: mc.id,
       status: mc.status,
-      medication: mc.medicationCodeableConcept ? mc.medicationCodeableConcept.text : '',
+      medication: mc.medicationCodeableConcept ? mc.medicationCodeableConcept.text : mc.medicationReference ? mc.medicationReference.display : 'missing',
       dosages: mc.dosageInstruction ? mc.dosageInstruction[0].text : '',
       requestedBy: mc.requester ? mc.requester.display : '',
       reasons: condition ? getConceptDisplayString(condition.code) : '',
-      effectiveDate: mc.authoredOn ? new Date(mc.authoredOn).toLocaleDateString() : '',
+      effectiveDate: mc.authoredOn ? displayDate(mc.authoredOn) : '',
       refillsPermitted: 'Unknown',
       notes: mc.note ? convertNoteToString(mc.note) : '',
     }

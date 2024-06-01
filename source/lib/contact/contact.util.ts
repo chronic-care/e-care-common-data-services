@@ -63,7 +63,11 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
 
 export const transformToMccContact = (participants: CareTeamParticipant[], practitioner: Practitioner): MccPatientContact => {
   const address = practitioner.address ? `${practitioner.address[0].line[0]} ${practitioner.address[0].city} ${practitioner.address[0].state} ${practitioner.address[0].postalCode} ${practitioner.address[0].country}` : '';
-  const name = practitioner.name[0].use === 'usual' ? `${practitioner.name[0].given[0]} ${practitioner.name[0].family}` : practitioner.name[0].text;
+
+
+  const name = practitioner.name ? practitioner.name[0].use === 'usual' ? `${practitioner.name[0].given[0]} ${practitioner.name[0].family}` : practitioner.name[0].text : 'NONAME';
+
+
   participants.find((participant) => participant.member?.reference.includes(practitioner.id)).role[0].text;
 
   return {

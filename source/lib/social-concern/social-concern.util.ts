@@ -2,6 +2,7 @@ import { CodeableConcept, Resource } from 'fhir/r4';
 import { fhirclient } from 'fhirclient/lib/types';
 
 import { MccCondition, MccSocialConcern } from '../../types/mcc-types';
+import { displayDate } from '../service-request/service-request.util';
 
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
@@ -65,7 +66,7 @@ export const transformToSocialConcern = (condition: MccCondition): MccSocialConc
     name: condition.code.text,
     data: condition.clinicalStatus && condition.clinicalStatus.coding[0] ? condition.clinicalStatus.coding[0].code : '',
     description: null,
-    date: condition.onsetDateTime ? new Date(condition.onsetDateTime).toLocaleDateString() : null,
+    date: condition.onsetDateTime ? displayDate(condition.onsetDateTime) : null,
     hovered: false,
   };
 }

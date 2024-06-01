@@ -343,9 +343,8 @@ export type MccConditionSummary = {
     recordedAsText: string;
   }[];
   profileId: string;
-  firstRecorded: number | null;
   firstRecordedAsText: string;
-  firstOnset: string;
+  firstOnsetAsText: string;
   clinicalStatus: string;
   verificationStatus: string;
 }

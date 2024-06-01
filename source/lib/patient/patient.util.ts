@@ -2,6 +2,7 @@ import { CodeableConcept, Resource } from 'fhir/r4';
 import { fhirclient } from 'fhirclient/lib/types';
 
 import { MccPatient, MccPatientSummary } from '../../types/mcc-types';
+import { displayDate } from '../service-request/service-request.util';
 
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
@@ -75,5 +76,5 @@ export const transformToPatientSummary = (patient: MccPatient): MccPatientSummar
 
   const name = patient.name ? patient.name[0].text : '';
 
-  return { race, id, fhirid, gender, age, dateOfBirth: patient.birthDate, ethnicity, name }
+  return { race, id, fhirid, gender, age, dateOfBirth: displayDate(patient.birthDate), ethnicity, name }
 }
