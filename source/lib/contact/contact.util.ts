@@ -65,18 +65,22 @@ export const transformToMccContact = (participants: CareTeamParticipant[], pract
   const address = practitioner.address ? `${practitioner.address[0].line[0]} ${practitioner.address[0].city} ${practitioner.address[0].state} ${practitioner.address[0].postalCode} ${practitioner.address[0].country}` : '';
 
 
-  const name = practitioner.name ? practitioner.name[0].use === 'usual' ? `${practitioner.name[0].given[0]} ${practitioner.name[0].family}` : practitioner.name[0].text : 'NONAME';
+  const name = practitioner.name ? practitioner.name[0].use === 'usual' ? `${practitioner.name[0].given ? practitioner.name[0].given[0] : 'MISSINGGIVEN'} ${practitioner.name[0].family}` : practitioner.name[0].text : 'NONAME';
 
+  const theParticipation = participants.find((participant) => participant.member?.reference.includes(practitioner.id));
 
-  participants.find((participant) => participant.member?.reference.includes(practitioner.id)).role[0].text;
+  const theRole = theParticipation?.role ? getConceptDisplayString(theParticipation?.role[0]) : 'ROLE MISSING'
+
+  const thePhone = practitioner?.telecom?.find((t) => t?.system === 'phone');
+  const theEmail = practitioner?.telecom?.find((t) => t?.system === 'email');
 
   return {
     type: 'person',
-    role: participants.find((participant) => participant.member?.reference.includes(practitioner.id)).role[0].text,
+    role: theRole,
     name: name,
     hasImage: false,
-    phone: practitioner.telecom[0].value,
-    email: practitioner.telecom[1].value,
+    phone: thePhone ? thePhone?.value : 'PHONE MISSING',
+    email: theEmail ? theEmail?.value : 'EMAIL MISSING',
     address: address,
     relFhirId: 'relation'
   };
