@@ -3,6 +3,7 @@ import { fhirclient } from 'fhirclient/lib/types';
 
 import { getFilenameFromValueSetCode } from '../../query/json';
 import { MccCondition, MccConditionSummary } from '../../types/mcc-types';
+import { displayDate } from '../service-request/service-request.util';
 
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
@@ -52,11 +53,44 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
   return '';
 };
 
+export const getConceptCode = (code: CodeableConcept): string => {
+
+  if (code) {
+
+
+    if (code.coding) {
+      return code.coding.reduce((_, curr) => curr.code, '');
+    }
+
+    if (code.text) return code.text;
+
+  }
+
+
+  return '';
+};
+
+// function getCodeableConceptAsString(codeableConcept: CodeableConcept) {
+//   return 'NULL' + JSON.stringify(codeableConcept)
+// }
+
+// export const getCodeableConceptAsStrings = (codeableConcept: CodeableConcept): string => {
+//   // if (codeableConcept) {
+//   //   if (codeableConcept.text) {
+//   //     return codeableConcept.text
+//   //   } else if (codeableConcept.coding) {
+//   //     return codeableConcept.coding[0].display
+//   //   }
+//   // }
+//   return 'MISSING'
+// }
+
 export const transformToConditionSummary = async (fhirCondition: MccCondition): Promise<MccConditionSummary> => {
   const profileMapping = {
     '2.16.840.1.113762.1.4.1222.159': 'CKD'
   }
   const code = fhirCondition.code.coding[0];
+
   const codeName = await getFilenameFromValueSetCode(code.system, code.code)
 
   const transformedData: MccConditionSummary = {
@@ -65,23 +99,22 @@ export const transformToConditionSummary = async (fhirCondition: MccCondition): 
     history: [
       {
         code: fhirCondition.code,
-        onset: new Date(fhirCondition.onsetDateTime).toLocaleDateString(),
+        onset: fhirCondition.onsetDateTime ? displayDate(fhirCondition.onsetDateTime) : '',
         abatement: null,
-        clinicalStatus: fhirCondition.clinicalStatus.coding[0].code,
-        verificationStatus: fhirCondition.verificationStatus.coding[0].code,
+        clinicalStatus: getConceptCode(fhirCondition.clinicalStatus),
+        verificationStatus: getConceptCode(fhirCondition.verificationStatus),
         categories: fhirCondition.category[0].text,
         recorded: fhirCondition.recordedDate ? new Date(fhirCondition.recordedDate).getTime() : null,
         note: "",
         fhirid: fhirCondition.id,
-        recordedAsText: fhirCondition.recordedDate ? new Date(fhirCondition.recordedDate).toLocaleDateString() : '',
+        recordedAsText: fhirCondition.recordedDate ? displayDate(fhirCondition.onsetDateTime) : '',
       },
     ],
     profileId: profileMapping[codeName],
-    firstRecorded: fhirCondition.recordedDate ? new Date(fhirCondition.recordedDate).getTime() : null,
-    firstRecordedAsText: fhirCondition.recordedDate ? new Date(fhirCondition.recordedDate).toLocaleDateString() : '',
-    firstOnset: new Date(fhirCondition.onsetDateTime).toLocaleDateString(),
-    clinicalStatus: fhirCondition.clinicalStatus.coding[0].code,
-    verificationStatus: fhirCondition.verificationStatus.coding[0].code,
+    firstRecordedAsText: fhirCondition.recordedDate ? displayDate(fhirCondition.recordedDate) : '',
+    firstOnsetAsText: fhirCondition.onsetDateTime ? displayDate(fhirCondition.onsetDateTime) : '',
+    clinicalStatus: getConceptCode(fhirCondition.clinicalStatus),
+    verificationStatus: getConceptCode(fhirCondition.verificationStatus)
   };
 
   return transformedData;

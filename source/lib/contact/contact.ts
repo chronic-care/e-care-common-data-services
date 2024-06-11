@@ -1,64 +1,53 @@
-import { CareTeamParticipant, Patient, Reference } from 'fhir/r4';
+import { CareTeam, CareTeamParticipant, Practitioner, Resource } from 'fhir/r4';
+
 import FHIR from 'fhirclient';
+import { fhirclient } from 'fhirclient/lib/types';
 
-import { MccCarePlan, MccPatientContact, PatientContactRole } from '../../types/mcc-types';
+import { MccPatientContact } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
-import { getCareplan } from '../careplan';
 
-import { transformToMccContact } from './contact.util';
+import { fhirOptions, resourcesFrom, transformToMccContact } from './contact.util';
+
+
+
 
 export const getContacts = async (carePlanId?: string): Promise<MccPatientContact[]> => {
   const client = await FHIR.oauth2.ready();
 
-  const currentPatient: Patient = await client.patient.read();
+  let careTeamMembers = new Map<string, Practitioner>()
+  const _careTeamPath = "CareTeam?_include=CareTeam:participant";
+  let careTeams: CareTeam[] | undefined
+  let careTeamData: Resource[] = resourcesFrom(await client.patient.request(_careTeamPath, fhirOptions) as fhirclient.JsonObject)
 
-  const patientContacts: PatientContactRole[] = [{ ...currentPatient, role: 'Patient' } as PatientContactRole];
-  log.debug({ serviceName: 'getContacts', result: { patientContacts: patientContacts, carePlanId } });
-
-  const contactCarePlan: MccCarePlan = await getCareplan(carePlanId);
-
-  if (contactCarePlan && Array.isArray(contactCarePlan.careTeam) && contactCarePlan.careTeam.length > 0) {
-    log.debug({ serviceName: 'getContacts', result: { referenceContact: contactCarePlan.careTeam[0].reference, carePlanId } });
-    try {
-      const contactCareTeamRequest = await client.request(
-        contactCarePlan.careTeam[0].reference
-      );
-      log.debug({ serviceName: 'getContacts', result: { contactCareTeamRequest: contactCareTeamRequest, carePlanId } });
-
-      const contactCareTeamDetail: PatientContactRole[] = await Promise.all((contactCareTeamRequest.participant as CareTeamParticipant[]).map(async (careTeam) => {
-        const careTeamDetail = await client.request((careTeam.member as Reference).reference);
-        return { ...careTeamDetail, role: careTeam.role[0].text };
-      }))
-
-      log.debug({ serviceName: 'getContacts', result: { contactCareTeamDetail: contactCareTeamDetail, carePlanId } });
-
-      // eslint-disable-next-line functional/immutable-data
-      patientContacts.push(...contactCareTeamDetail);
-
-    } catch (error) {
-      log.error({ serviceName: 'getContacts', result: { error: error, carePlanId } });
+  careTeams = careTeamData?.filter((item: any) => item.resourceType === 'CareTeam') as CareTeam[]
+  const careTeamPractitioners =
+    careTeamData?.filter((item: any) => item.resourceType === 'Practitioner') as Practitioner[]
+  careTeamPractitioners?.forEach((pract: Practitioner) => {
+    if (pract.id !== undefined && careTeamMembers.get(pract.id!) === undefined) {
+      careTeamMembers.set(pract.id!, pract)
     }
-  }
-
-  const currentDate = new Date().toLocaleString();
-
-  const activePatientContacts = patientContacts.filter(contact => {
-    // is in period
-    if (contact.period && contact.period.start) {
-      if (currentDate.localeCompare(contact.period.start) < 0) {
-        return false;
-      }
-    }
-    if (contact.period && contact.period.end) {
-      if (currentDate.localeCompare(contact.period.end) > 0) {
-        return false;
-      }
-    }
-    return true;
   })
 
-  const mappedPatientContacts = activePatientContacts.map(contact => transformToMccContact(contact));
+
+  let participants: CareTeamParticipant[] = [];
+
+  if (careTeams) {
+    let partArrays = careTeams.map(team => team.participant);
+    participants = flatten(partArrays) as CareTeamParticipant[];
+  }
+
+  let array = Array.from(careTeamMembers, ([name, value]) => ({ name, value }));
+
+
+
+  const mappedPatientContacts = array.map(contact => transformToMccContact(participants, contact.value))
 
   log.debug({ serviceName: 'getContacts', result: { contacts: mappedPatientContacts, carePlanId } });
   return mappedPatientContacts;
 };
+
+function flatten(arr?: any) {
+  return arr?.reduce(function (flat: any, toFlatten: any) {
+    return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)
+  }, [])
+}

@@ -1,16 +1,20 @@
 /* eslint-disable functional/immutable-data */
+// import localForage from 'localforage'
 import { GoalTarget, Resource } from 'fhir/r4';
 import FHIR from 'fhirclient';
+import Client from 'fhirclient/lib/Client';
 import { fhirclient } from 'fhirclient/lib/types';
 
 import { MccGoal, MccGoalList, MccGoalSummary } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
 
 import {
+  getSupplementalDataClient,
   notFoundResponse,
   resourcesFrom,
   resourcesFromObject,
   resourcesFromObjectArray,
+  saveFHIRAccessData,
   transformToMccGoalSummary,
 } from './goal.util';
 
@@ -19,6 +23,12 @@ enum ACTIVE_STATUS {
   INACTIVE,
   IGNORE
 }
+
+const LF_ID = '-MCP'
+const fcCurrentStateKey = 'fhir-client-state' + LF_ID
+// const fcAllStatesKey = 'fhir-client-states-array' + LF_ID
+
+// const selectedEndpointsKey = 'selected-endpoints' + LF_ID
 
 const ACTIVE_KEYS = {
   proposed: ACTIVE_STATUS.ACTIVE,
@@ -34,25 +44,48 @@ const ACTIVE_KEYS = {
 }
 
 export const getSummaryGoals = async (): Promise<MccGoalList> => {
-  const client = await FHIR.oauth2.ready();
+  const client: Client = await FHIR.oauth2.ready();
   const allGoals: MccGoalSummary[] = [];
   const activePatientGoals: MccGoalSummary[] = [];
   const activeClinicalGoals: MccGoalSummary[] = [];
   const activeTargets: GoalTarget[] = [];
   const inactivePatientGoals: MccGoalSummary[] = [];
   const inactiveClinicalGoals: MccGoalSummary[] = [];
+  const sdsPatientGoals: MccGoalSummary[] = [];
+
 
   const queryPath = `Goal`;
   const goalRequest: fhirclient.JsonObject = await client.patient.request(
     queryPath
   );
 
+
+
+  // const sdsGoalRequest2: fhirclient.JsonObject = await sdsClient.patient.request(
+  //   queryPath
+  // );
+
+  const sdsGoalRequest: fhirclient.JsonObject = await client.patient.request(
+    queryPath
+  );
+
+
   // goal from problem list item
   const filteredGoals: MccGoal[] = resourcesFromObjectArray(
     goalRequest
   ) as MccGoal[];
 
+  const sdsFilterGoals: MccGoal[] = resourcesFromObjectArray(
+    sdsGoalRequest
+  ) as MccGoal[];
+
   const mappedGoals: MccGoalSummary[] = filteredGoals.map(transformToMccGoalSummary);
+
+  const sdsMappedGoals: MccGoalSummary[] = sdsFilterGoals.map(transformToMccGoalSummary);
+
+  sdsMappedGoals.forEach(goal => {
+    sdsPatientGoals.push(goal)
+  })
 
   mappedGoals.forEach(goal => {
     let activeStatus = ACTIVE_KEYS[goal.lifecycleStatus]
@@ -93,7 +126,8 @@ export const getSummaryGoals = async (): Promise<MccGoalList> => {
     activePatientGoals,
     activeTargets,
     inactiveClinicalGoals,
-    inactivePatientGoals
+    inactivePatientGoals,
+    sdsPatientGoals
   };
 
 
@@ -106,8 +140,27 @@ export const getSummaryGoals = async (): Promise<MccGoalList> => {
   return mccGoalList;
 };
 
+
+/*
+* TODO: enhance this to verify current access token for SDS.
+*/
+
+
 export const getGoals = async (): Promise<MccGoal[]> => {
   const client = await FHIR.oauth2.ready();
+
+  console.error('start saveFHIRAccessData');
+
+  await saveFHIRAccessData(fcCurrentStateKey, client.state, false).then(() => {
+    console.log('fhirClientState saved/promise returned')
+  }).catch((e) => console.log(e))
+
+  console.error('end saveFHIRAccessData');
+
+  const sdsClient: Client = await getSupplementalDataClient();
+  console.error(
+    `getGoals - ` + JSON.stringify(sdsClient)
+  );
 
   const queryPath = `Goal`;
   const goalRequest: fhirclient.JsonArray = await client.patient.request(

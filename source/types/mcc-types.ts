@@ -246,6 +246,7 @@ export type MccGoalList = {
   activePatientGoals?: Array<MccGoalSummary>;
   inactivePatientGoals?: Array<MccGoalSummary>;
   activeTargets?: Array<GoalTarget>;
+  sdsPatientGoals?: Array<MccGoalSummary>;
 }
 
 
@@ -282,7 +283,6 @@ export type MccGoalSummary = {
   priority: string;
   expressedByType?: string;
   description: string;
-  achievementStatus?: MccCodeableConcept;
   achievementText?: string;
   lifecycleStatus: string;
   startDateText?: string;
@@ -343,9 +343,8 @@ export type MccConditionSummary = {
     recordedAsText: string;
   }[];
   profileId: string;
-  firstRecorded: number | null;
   firstRecordedAsText: string;
-  firstOnset: string;
+  firstOnsetAsText: string;
   clinicalStatus: string;
   verificationStatus: string;
 }

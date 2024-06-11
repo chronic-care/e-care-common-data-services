@@ -1,7 +1,9 @@
-import { CodeableConcept, Resource } from 'fhir/r4';
+import { CareTeamParticipant, CodeableConcept, Practitioner, Resource } from 'fhir/r4';
 import { fhirclient } from 'fhirclient/lib/types';
 
-import { MccPatientContact, PatientContactRole } from '../../types/mcc-types';
+import { MccPatientContact } from '../../types/mcc-types';
+
+// import log from '../../utils/loglevel';
 
 export const fhirOptions: fhirclient.FhirOptions = {
   pageLimit: 0,
@@ -30,11 +32,18 @@ export const resourcesFromObject = (
   return resource;
 };
 
-export const resourcesFrom = (response: fhirclient.JsonArray): Resource[] => {
+export const resourcesFrom = (response: fhirclient.JsonObject): Resource[] => {
+  const entries = (response[0] as fhirclient.JsonObject)?.entry as [fhirclient.JsonObject];
+  return entries?.map((entry: fhirclient.JsonObject) => entry.resource as any)
+    .filter((resource: Resource) => resource.resourceType !== 'OperationOutcome');
+};
+
+export const resourcesFrom2 = (response: fhirclient.JsonArray): Resource[] => {
   const firstEntries = response[0] as fhirclient.JsonObject;
   const entries: fhirclient.JsonObject[] = firstEntries?.entry
     ? (firstEntries.entry as [fhirclient.JsonObject])
     : [];
+
   return entries
     .map((entry: fhirclient.JsonObject) => entry?.resource as any)
     .filter(
@@ -52,18 +61,27 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
   return '';
 };
 
-export const transformToMccContact = (contact: PatientContactRole): MccPatientContact => {
-  const address = contact.address ? `${contact.address[0].line[0]} ${contact.address[0].city} ${contact.address[0].state} ${contact.address[0].postalCode} ${contact.address[0].country}` : '';
-  const relation = contact.role === 'Patient' ? `${contact.role}/${contact.id}` : (contact as any).patient ? (contact as any).patient.reference : ''
-  const name = contact.name[0].use === 'usual' ? `${contact.name[0].given[0]} ${contact.name[0].family}` : contact.name[0].text;
+export const transformToMccContact = (participants: CareTeamParticipant[], practitioner: Practitioner): MccPatientContact => {
+  const address = practitioner.address ? `${practitioner.address[0].line[0]} ${practitioner.address[0].city} ${practitioner.address[0].state} ${practitioner.address[0].postalCode} ${practitioner.address[0].country}` : '';
+
+
+  const name = practitioner.name ? practitioner.name[0].use === 'usual' ? `${practitioner.name[0].given ? practitioner.name[0].given[0] : 'MISSINGGIVEN'} ${practitioner.name[0].family}` : practitioner.name[0].text : 'NONAME';
+
+  const theParticipation = participants.find((participant) => participant.member?.reference.includes(practitioner.id));
+
+  const theRole = theParticipation?.role ? getConceptDisplayString(theParticipation?.role[0]) : 'ROLE MISSING'
+
+  const thePhone = practitioner?.telecom?.find((t) => t?.system === 'phone');
+  const theEmail = practitioner?.telecom?.find((t) => t?.system === 'email');
+
   return {
     type: 'person',
-    role: contact.role,
+    role: theRole,
     name: name,
     hasImage: false,
-    phone: contact.telecom[0].value,
-    email: contact.telecom[1].value,
+    phone: thePhone ? thePhone?.value : 'PHONE MISSING',
+    email: theEmail ? theEmail?.value : 'EMAIL MISSING',
     address: address,
-    relFhirId: relation,
+    relFhirId: 'relation'
   };
 }
