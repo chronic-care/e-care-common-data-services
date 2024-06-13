@@ -1,4 +1,4 @@
-import { CareTeamParticipant, CodeableConcept, Practitioner, Resource } from 'fhir/r4';
+import { CareTeamParticipant, CodeableConcept, Practitioner, Reference, Resource } from 'fhir/r4';
 import { fhirclient } from 'fhirclient/lib/types';
 
 import { MccPatientContact } from '../../types/mcc-types';
@@ -61,27 +61,41 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
   return '';
 };
 
-export const transformToMccContact = (participants: CareTeamParticipant[], practitioner: Practitioner): MccPatientContact => {
-  const address = practitioner.address ? `${practitioner.address[0].line[0]} ${practitioner.address[0].city} ${practitioner.address[0].state} ${practitioner.address[0].postalCode} ${practitioner.address[0].country}` : '';
+function resolve(ref?: Reference, members?: Map<string, Practitioner>) {
+  let resourceID: string | undefined = ref?.reference?.split('/').reverse()?.[0]
+  return members?.get(resourceID ?? 'missing id')
+}
+
+export const transformToMccContact = (careTeamParticipant: CareTeamParticipant, careTeamMembers: Map<string, Practitioner>): MccPatientContact => {
+  const theRole = careTeamParticipant?.role ? getConceptDisplayString(careTeamParticipant?.role[0]) : ''
+
+  const theParticipation = resolve(careTeamParticipant.member, careTeamMembers);
+
+  const thePhone = theParticipation?.telecom?.find((t) => t?.system === 'phone');
+  const theEmail = theParticipation?.telecom?.find((t) => t?.system === 'email');
+
+  var theAddress = '';
+  if (theParticipation) {
+    if (theParticipation.address) {
+      var theLine = (theParticipation.address[0].line ? theParticipation.address[0].line[0] : '');
+      var theCity = (theParticipation.address[0].city ? theParticipation.address[0].city : '');
+      var theState = (theParticipation.address[0].state ? theParticipation.address[0].state : '');
+      var theZip = (theParticipation.address[0].postalCode ? theParticipation.address[0].postalCode : '');
+      theAddress = `${theLine} ${theCity} ${theState} ${theZip}`
+    }
+  }
 
 
-  const name = practitioner.name ? practitioner.name[0].use === 'usual' ? `${practitioner.name[0].given ? practitioner.name[0].given[0] : 'MISSINGGIVEN'} ${practitioner.name[0].family}` : practitioner.name[0].text : 'NONAME';
-
-  const theParticipation = participants.find((participant) => participant.member?.reference.includes(practitioner.id));
-
-  const theRole = theParticipation?.role ? getConceptDisplayString(theParticipation?.role[0]) : 'ROLE MISSING'
-
-  const thePhone = practitioner?.telecom?.find((t) => t?.system === 'phone');
-  const theEmail = practitioner?.telecom?.find((t) => t?.system === 'email');
+  const theName = theParticipation?.name?.[0].text ?? careTeamParticipant.member?.display ?? careTeamParticipant.member?.reference ?? "No name";
 
   return {
     type: 'person',
     role: theRole,
-    name: name,
+    name: theName,
     hasImage: false,
-    phone: thePhone ? thePhone?.value : 'PHONE MISSING',
-    email: theEmail ? theEmail?.value : 'EMAIL MISSING',
-    address: address,
+    phone: thePhone ? thePhone?.value : '',
+    email: theEmail ? theEmail?.value : '',
+    address: theAddress ? theAddress : '',
     relFhirId: 'relation'
   };
 }

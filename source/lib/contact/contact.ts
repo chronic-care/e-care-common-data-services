@@ -20,28 +20,18 @@ export const getContacts = async (carePlanId?: string): Promise<MccPatientContac
   let careTeamData: Resource[] = resourcesFrom(await client.patient.request(_careTeamPath, fhirOptions) as fhirclient.JsonObject)
 
   careTeams = careTeamData?.filter((item: any) => item.resourceType === 'CareTeam') as CareTeam[]
-  const careTeamPractitioners =
-    careTeamData?.filter((item: any) => item.resourceType === 'Practitioner') as Practitioner[]
+  const careTeamPractitioners = careTeamData?.filter((item: any) => item.resourceType === 'Practitioner') as Practitioner[]
   careTeamPractitioners?.forEach((pract: Practitioner) => {
     if (pract.id !== undefined && careTeamMembers.get(pract.id!) === undefined) {
       careTeamMembers.set(pract.id!, pract)
     }
   })
-
-
   let participants: CareTeamParticipant[] = [];
-
   if (careTeams) {
     let partArrays = careTeams.map(team => team.participant);
     participants = flatten(partArrays) as CareTeamParticipant[];
   }
-
-  let array = Array.from(careTeamMembers, ([name, value]) => ({ name, value }));
-
-
-
-  const mappedPatientContacts = array.map(contact => transformToMccContact(participants, contact.value))
-
+  const mappedPatientContacts = participants.map(careTeamParticipant => transformToMccContact(careTeamParticipant, careTeamMembers))
   log.debug({ serviceName: 'getContacts', result: { contacts: mappedPatientContacts, carePlanId } });
   return mappedPatientContacts;
 };

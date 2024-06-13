@@ -1,6 +1,6 @@
 {
   "name": "e-care-common-data-services",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "description": "Common data service for mcc-provider and mcc-care-planner",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
