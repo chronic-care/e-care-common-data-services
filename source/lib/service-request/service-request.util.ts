@@ -64,7 +64,6 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
 };
 
 export const transformToServiceRequest = function (serviceRequest: ServiceRequest, referenceDisplay: Map<string, string>): MccServiceRequestSummary {
-  console.error('transformToServiceRequest ' + JSON.stringify(referenceDisplay));
   return {
     topic: { text: displayConcept(serviceRequest.code) },
     type: serviceRequest.category ? serviceRequest.category[0].text : 'missing',

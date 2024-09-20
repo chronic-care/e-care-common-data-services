@@ -1,10 +1,12 @@
 /* eslint-disable functional/immutable-data */
+import { Condition } from 'fhir/r4';
 import FHIR from 'fhirclient';
+import Client from 'fhirclient/lib/Client';
 import { fhirclient } from 'fhirclient/lib/types';
 
 import { MccCondition, MccConditionList, MccConditionSummary } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
-
+import { getSupplementalDataClient } from '../goal/goal.util';
 import {
   notFoundResponse,
   resourcesFrom,
@@ -69,8 +71,78 @@ const ACTIVE_KEYS = {
   "resolved:entered-in-error": ACTIVE_STATUS.IGNORE,
 }
 
-export const getSummaryConditions = async (): Promise<MccConditionList> => {
+
+export const getSupplementalConditions = async (launchURL: string, sdsClient: Client): Promise<Condition[]> => {
+  let conditionMap = new Map();
+  let allThirdPartyMappedConditions: Condition[] = [];
+
+  if (sdsClient) {
+    try {
+      // First Linkage request
+      const linkages = await sdsClient.request('Linkage');
+      // Loop through first set of linkages
+      for (const entry of linkages.entry) {
+        for (const item of entry.resource.item) {
+          if (!conditionMap.has(JSON.stringify(item.resource.reference))) {
+            conditionMap.set(JSON.stringify(item.resource.reference), JSON.stringify(item.resource.reference));
+
+            if (item.type === 'source') {
+              const urlSet = new Set();
+
+              urlSet.add(launchURL)
+
+              // Second Linkage request for each source item
+              const linkages2 = await sdsClient.request('Linkage?item=' + item.resource.reference);
+
+              // Loop through second set of linkages
+              for (const entry2 of linkages2.entry) {
+                for (const item2 of entry2.resource.item) {
+                  if (item2.type === 'alternate' && !urlSet.has(item2.resource.extension[0].valueUrl)) {
+                    urlSet.add(item2.resource.extension[0].valueUrl);
+
+                    // Prepare FHIR request headers
+                    const fhirHeaderRequestOption = {} as fhirclient.RequestOptions;
+                    const fhirHeaders = {
+                      'X-Partition-Name': item2.resource.extension[0].valueUrl
+                    };
+                    fhirHeaderRequestOption.headers = fhirHeaders;
+                    fhirHeaderRequestOption.url = 'Condition?subject=' + item2.resource.reference;
+
+                    // Fetch third-party goals
+                    const response = await sdsClient.request(fhirHeaderRequestOption);
+
+                    // Process third-party goals
+                    const thirdPartyGoals: Condition[] = resourcesFrom(response) as Condition[];
+                    // const thirdPartyMappedGoals: MccGoalSummary[] = thirdPartyGoals.map(transformToMccGoalSummary);
+
+                    thirdPartyGoals.forEach(condition => {
+
+                      condition.code.text = condition.code.text + "(" + item2.resource.extension[0].valueUrl + ")"
+                      allThirdPartyMappedConditions.push(condition);
+                    });
+
+
+
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+    } catch (error) {
+      // Code to handle the error
+      console.error("An error occurred: " + error.message);
+    }
+  }
+  return allThirdPartyMappedConditions;
+};
+
+
+export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsScope: string): Promise<MccConditionList> => {
   const client = await FHIR.oauth2.ready();
+  let sdsClient = await getSupplementalDataClient(client, sdsURL, authURL, sdsScope)
 
   const activeConcerns: MccConditionSummary[] = []
   const activeConditions: MccConditionSummary[] = []
@@ -87,6 +159,18 @@ export const getSummaryConditions = async (): Promise<MccConditionList> => {
     queryPath2
   );
 
+  let sdsfilteredConditions2: MccCondition[] = [];
+  if (sdsClient) {
+    const sdsconditionRequest2: fhirclient.JsonObject = await sdsClient.patient.request(
+      queryPath2
+    );
+    sdsfilteredConditions2 = resourcesFrom(
+      sdsconditionRequest2
+    ) as MccCondition[];
+  }
+
+
+
   // condition from problem list item
   const filteredConditions1: MccCondition[] = resourcesFrom(
     conditionRequest1
@@ -97,12 +181,16 @@ export const getSummaryConditions = async (): Promise<MccConditionList> => {
     conditionRequest2
   ) as MccCondition[];
 
+  const thirdPartyStuff = await getSupplementalConditions(client.state.serverUrl, sdsClient);
+
   log.info(
     `getSummaryConditions - successful`
   );
-  const filteredConditions = [...filteredConditions1, ...filteredConditions2]
+  const filteredConditions = [...filteredConditions1, ...filteredConditions2, ...sdsfilteredConditions2, ...thirdPartyStuff]
+
 
   log.debug({ serviceName: 'getSummaryConditions', result: { filteredConditions } });
+
 
   const mappedFilterConditions = await Promise.all(filteredConditions.map(transformToConditionSummary))
 
@@ -114,6 +202,7 @@ export const getSummaryConditions = async (): Promise<MccConditionList> => {
     const categories = cond.categories;
     const isProblemOrEncounter = categories.includes("problem-list-item") || categories.includes("encounter-diagnosis");;
     const isHealthConcern = categories.includes("health-concern");
+
 
     if (!isNaN(activeStatus)) {
       switch (activeStatus) {
@@ -153,7 +242,7 @@ export const getSummaryConditions = async (): Promise<MccConditionList> => {
     inactiveConditions
   }
 
-  log.debug({ serviceName: 'getSummaryConditions', result: { mccConditionList } });
+
 
   return mccConditionList;
 };

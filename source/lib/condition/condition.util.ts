@@ -114,8 +114,12 @@ export const transformToConditionSummary = async (fhirCondition: MccCondition): 
     firstRecordedAsText: fhirCondition.recordedDate ? displayDate(fhirCondition.recordedDate) : '',
     firstOnsetAsText: fhirCondition.onsetDateTime ? displayDate(fhirCondition.onsetDateTime) : '',
     clinicalStatus: getConceptCode(fhirCondition.clinicalStatus),
-    verificationStatus: getConceptCode(fhirCondition.verificationStatus)
+    verificationStatus: getConceptCode(fhirCondition.verificationStatus),
+    asserter: fhirCondition.asserter ? fhirCondition.asserter.display : ''
   };
+
+
+
 
   return transformedData;
 }

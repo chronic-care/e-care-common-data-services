@@ -347,6 +347,7 @@ export type MccConditionSummary = {
   firstOnsetAsText: string;
   clinicalStatus: string;
   verificationStatus: string;
+  asserter: string;
 }
 
 export type MccConditionList = {
@@ -380,3 +381,18 @@ export type MccServiceRequestSummary = {
 
 
 export type PatientContactRole = PatientContact & { role: string }
+
+
+export type MCCAssessmentResponseItem = {
+  question?: string;
+  answer?: string;
+
+}
+
+
+export type MccAssessment = {
+  title?: string;
+  date?: string,
+  questions?: Array<MCCAssessmentResponseItem>,
+  subsections?: Array<MccAssessment>
+}
