@@ -73,67 +73,43 @@ const ACTIVE_KEYS = {
 
 
 export const getSupplementalConditions = async (launchURL: string, sdsClient: Client): Promise<Condition[]> => {
-  let conditionMap = new Map();
   let allThirdPartyMappedConditions: Condition[] = [];
 
   if (sdsClient) {
     try {
-      // First Linkage request
-      const linkages = await sdsClient.request('Linkage');
-      // Loop through first set of linkages
-      for (const entry of linkages.entry) {
-        for (const item of entry.resource.item) {
-          if (!conditionMap.has(JSON.stringify(item.resource.reference))) {
-            conditionMap.set(JSON.stringify(item.resource.reference), JSON.stringify(item.resource.reference));
+      const linkages = await sdsClient.request('Linkage?item=Patient/' + sdsClient.patient.id);
+      console.log("patientId +linkages " + JSON.stringify(linkages));
+      const urlSet = new Set();
 
-            if (item.type === 'source') {
-              const urlSet = new Set();
+      urlSet.add(launchURL)
+      // Loop through second set of linkages
+      for (const entry2 of linkages.entry) {
+        for (const item2 of entry2.resource.item) {
+          if (item2.type === 'alternate' && !urlSet.has(item2.resource.extension[0].valueUrl)) {
+            urlSet.add(item2.resource.extension[0].valueUrl);
+            // Prepare FHIR request headers
+            const fhirHeaderRequestOption = {} as fhirclient.RequestOptions;
+            const fhirHeaders = {
+              'X-Partition-Name': item2.resource.extension[0].valueUrl
+            };
+            fhirHeaderRequestOption.headers = fhirHeaders;
+            fhirHeaderRequestOption.url = 'Condition?subject=' + item2.resource.reference;
 
-              urlSet.add(launchURL)
+            // Fetch third-party goals
+            const response = await sdsClient.request(fhirHeaderRequestOption);
 
-              // Second Linkage request for each source item
-              const linkages2 = await sdsClient.request('Linkage?item=' + item.resource.reference);
+            // Process third-party goals
+            const thirdPartyGoals: Condition[] = resourcesFrom(response) as Condition[];
+            thirdPartyGoals.forEach(condition => {
 
-              // Loop through second set of linkages
-              for (const entry2 of linkages2.entry) {
-                for (const item2 of entry2.resource.item) {
-                  if (item2.type === 'alternate' && !urlSet.has(item2.resource.extension[0].valueUrl)) {
-                    urlSet.add(item2.resource.extension[0].valueUrl);
-
-                    // Prepare FHIR request headers
-                    const fhirHeaderRequestOption = {} as fhirclient.RequestOptions;
-                    const fhirHeaders = {
-                      'X-Partition-Name': item2.resource.extension[0].valueUrl
-                    };
-                    fhirHeaderRequestOption.headers = fhirHeaders;
-                    fhirHeaderRequestOption.url = 'Condition?subject=' + item2.resource.reference;
-
-                    // Fetch third-party goals
-                    const response = await sdsClient.request(fhirHeaderRequestOption);
-
-                    // Process third-party goals
-                    const thirdPartyGoals: Condition[] = resourcesFrom(response) as Condition[];
-                    // const thirdPartyMappedGoals: MccGoalSummary[] = thirdPartyGoals.map(transformToMccGoalSummary);
-
-                    thirdPartyGoals.forEach(condition => {
-
-                      condition.code.text = condition.code.text + "(" + item2.resource.extension[0].valueUrl + ")"
-                      allThirdPartyMappedConditions.push(condition);
-                    });
-
-
-
-                  }
-                }
-              }
-            }
+              condition.code.text = condition.code.text + "(" + item2.resource.extension[0].valueUrl + ")"
+              allThirdPartyMappedConditions.push(condition);
+            });
           }
         }
       }
-
     } catch (error) {
-      // Code to handle the error
-      console.error("An error occurred: " + error.message);
+      console.error("patientId An error occurred: " + error.message);
     }
   }
   return allThirdPartyMappedConditions;
@@ -184,7 +160,7 @@ export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsS
   const thirdPartyStuff = await getSupplementalConditions(client.state.serverUrl, sdsClient);
 
   log.info(
-    `getSummaryConditions - successful`
+    `getSummaryConditions - successful` + client.patient.id
   );
   const filteredConditions = [...filteredConditions1, ...filteredConditions2, ...sdsfilteredConditions2, ...thirdPartyStuff]
 

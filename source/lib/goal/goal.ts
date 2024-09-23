@@ -44,59 +44,41 @@ const ACTIVE_KEYS = {
 
 
 export const getSupplementalData = async (launchURL: string, sdsClient: Client): Promise<MccGoalSummary[]> => {
-  let goalMap = new Map();
   let allThirdPartyMappedGoals: MccGoalSummary[] = [];
-
   try {
-    // First Linkage request
-    const linkages = await sdsClient.request('Linkage');
-    linkages
-    for (const entry of linkages.entry) {
-      for (const item of entry.resource.item) {
-        if (!goalMap.has(JSON.stringify(item.resource.reference))) {
-          goalMap.set(JSON.stringify(item.resource.reference), JSON.stringify(item.resource.reference));
 
-          if (item.type === 'source') {
-            const urlSet = new Set();
+    const linkages = await sdsClient.request('Linkage?item=Patient/' + sdsClient.patient.id);
+    console.log("patientId +linkages " + JSON.stringify(linkages));
+    const urlSet = new Set();
+    urlSet.add(launchURL)
+    // Loop through second set of linkages
+    for (const entry2 of linkages.entry) {
+      for (const item2 of entry2.resource.item) {
+        if (item2.type === 'alternate' && !urlSet.has(item2.resource.extension[0].valueUrl)) {
+          urlSet.add(item2.resource.extension[0].valueUrl);
 
-            urlSet.add(launchURL)
+          // Prepare FHIR request headers
+          const fhirHeaderRequestOption = {} as fhirclient.RequestOptions;
+          const fhirHeaders = {
+            'X-Partition-Name': item2.resource.extension[0].valueUrl
+          };
+          fhirHeaderRequestOption.headers = fhirHeaders;
+          fhirHeaderRequestOption.url = 'Goal?subject=' + item2.resource.reference;
 
-            // Second Linkage request for each source item
-            const linkages2 = await sdsClient.request('Linkage?item=' + item.resource.reference);
+          // Fetch third-party goals
+          const response = await sdsClient.request(fhirHeaderRequestOption);
 
-            // Loop through second set of linkages
-            for (const entry2 of linkages2.entry) {
-              for (const item2 of entry2.resource.item) {
-                if (item2.type === 'alternate' && !urlSet.has(item2.resource.extension[0].valueUrl)) {
-                  urlSet.add(item2.resource.extension[0].valueUrl);
+          // Process third-party goals
+          const thirdPartyGoals: MccGoal[] = resourcesFromObjectArray(response) as MccGoal[];
+          const thirdPartyMappedGoals: MccGoalSummary[] = thirdPartyGoals.map(transformToMccGoalSummary);
 
-                  // Prepare FHIR request headers
-                  const fhirHeaderRequestOption = {} as fhirclient.RequestOptions;
-                  const fhirHeaders = {
-                    'X-Partition-Name': item2.resource.extension[0].valueUrl
-                  };
-                  fhirHeaderRequestOption.headers = fhirHeaders;
-                  fhirHeaderRequestOption.url = 'Goal?subject=' + item2.resource.reference;
-
-                  // Fetch third-party goals
-                  const response = await sdsClient.request(fhirHeaderRequestOption);
-
-                  // Process third-party goals
-                  const thirdPartyGoals: MccGoal[] = resourcesFromObjectArray(response) as MccGoal[];
-                  const thirdPartyMappedGoals: MccGoalSummary[] = thirdPartyGoals.map(transformToMccGoalSummary);
-
-                  thirdPartyMappedGoals.forEach(goal => {
-                    goal.expressedBy = (goal.expressedBy ? goal.expressedBy : '') + ' (' + item2.resource.extension[0].valueUrl + ')';
-                    allThirdPartyMappedGoals.push(goal);
-                  });
-                }
-              }
-            }
-          }
+          thirdPartyMappedGoals.forEach(goal => {
+            goal.expressedBy = (goal.expressedBy ? goal.expressedBy : '') + ' (' + item2.resource.extension[0].valueUrl + ')';
+            allThirdPartyMappedGoals.push(goal);
+          });
         }
       }
     }
-
   } catch (error) {
     // Code to handle the error
     console.error("An error occurred: " + error.message);
