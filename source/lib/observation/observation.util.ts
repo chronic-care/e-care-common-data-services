@@ -76,7 +76,7 @@ export const convertToObservationCollection = (observations: Observation[]): leg
       observations: []
     }
     if (!observationMap[key]) {
-      fndList.primaryCode = obs.code.coding[0].code;
+      fndList.primaryCode = obs.code.text;
       fndList.observations.push(obs);
     }
 

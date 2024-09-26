@@ -1,12 +1,13 @@
 /* eslint-disable functional/immutable-data */
 // import localForage from 'localforage'
-import { GoalTarget, Resource } from 'fhir/r4';
+import { GoalTarget, QuestionnaireResponse, QuestionnaireResponseItem, Resource } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import Client from 'fhirclient/lib/Client';
 import { fhirclient } from 'fhirclient/lib/types';
 
-import { MccGoal, MccGoalList, MccGoalSummary } from '../../types/mcc-types';
+import { MccAssessment, MCCAssessmentResponseItem, MccGoal, MccGoalList, MccGoalSummary } from '../../types/mcc-types';
 import log from '../../utils/loglevel';
+import { displayDate } from '../service-request/service-request.util';
 
 import {
   getSupplementalDataClient,
@@ -14,6 +15,7 @@ import {
   resourcesFrom,
   resourcesFromObject,
   resourcesFromObjectArray,
+  resourcesFromObjectArray2,
   saveFHIRAccessData,
   transformToMccGoalSummary,
 } from './goal.util';
@@ -26,9 +28,6 @@ enum ACTIVE_STATUS {
 
 const LF_ID = '-MCP'
 const fcCurrentStateKey = 'fhir-client-state' + LF_ID
-// const fcAllStatesKey = 'fhir-client-states-array' + LF_ID
-
-// const selectedEndpointsKey = 'selected-endpoints' + LF_ID
 
 const ACTIVE_KEYS = {
   proposed: ACTIVE_STATUS.ACTIVE,
@@ -43,8 +42,85 @@ const ACTIVE_KEYS = {
   'entered-in-error': ACTIVE_STATUS.IGNORE,
 }
 
-export const getSummaryGoals = async (): Promise<MccGoalList> => {
-  const client: Client = await FHIR.oauth2.ready();
+
+export const getSupplementalData = async (launchURL: string, sdsClient: Client): Promise<MccGoalSummary[]> => {
+  let allThirdPartyMappedGoals: MccGoalSummary[] = [];
+  try {
+
+    const linkages = await sdsClient.request('Linkage?item=Patient/' + sdsClient.patient.id);
+    console.log("patientId +linkages " + JSON.stringify(linkages));
+    const urlSet = new Set();
+    urlSet.add(launchURL)
+    // Loop through second set of linkages
+    for (const entry2 of linkages.entry) {
+      for (const item2 of entry2.resource.item) {
+        if (item2.type === 'alternate' && !urlSet.has(item2.resource.extension[0].valueUrl)) {
+          urlSet.add(item2.resource.extension[0].valueUrl);
+
+          // Prepare FHIR request headers
+          const fhirHeaderRequestOption = {} as fhirclient.RequestOptions;
+          const fhirHeaders = {
+            'X-Partition-Name': item2.resource.extension[0].valueUrl
+          };
+          fhirHeaderRequestOption.headers = fhirHeaders;
+          fhirHeaderRequestOption.url = 'Goal?subject=' + item2.resource.reference;
+
+          // Fetch third-party goals
+          const response = await sdsClient.request(fhirHeaderRequestOption);
+
+          // Process third-party goals
+          const thirdPartyGoals: MccGoal[] = resourcesFromObjectArray(response) as MccGoal[];
+          const thirdPartyMappedGoals: MccGoalSummary[] = thirdPartyGoals.map(transformToMccGoalSummary);
+
+          thirdPartyMappedGoals.forEach(goal => {
+            goal.expressedBy = (goal.expressedBy ? goal.expressedBy : '') + ' (' + item2.resource.extension[0].valueUrl + ')';
+            allThirdPartyMappedGoals.push(goal);
+          });
+        }
+      }
+    }
+  } catch (error) {
+    // Code to handle the error
+    console.error("An error occurred: " + error.message);
+  }
+
+  return allThirdPartyMappedGoals;
+};
+
+
+export const getAssessments = async (sdsURL: string, authURL: string, sdsScope: string): Promise<MccAssessment[]> => {
+
+  let assessments: MccAssessment[] = []
+
+  try {
+
+    const theCurrentClient: Client = await FHIR.oauth2.ready();
+    let sdsClient = await getSupplementalDataClient(theCurrentClient, sdsURL, authURL, sdsScope);
+
+    if (sdsClient) {
+      const sdsQuestionnaireResponse: fhirclient.JsonObject = await sdsClient.patient.request('QuestionnaireResponse');
+
+      const sdsQuestionnaireResponseArray: Resource[] = resourcesFromObjectArray2(
+        sdsQuestionnaireResponse
+      ) as Resource[];
+
+      assessments = sdsQuestionnaireResponseArray.map(transformToAssessment);
+
+    }
+
+  } catch (error) {
+    console.error(`getAssessments Error: ${error.message}`);
+  } finally {
+    console.log("Operation complete.");
+    return assessments;
+  }
+}
+
+
+
+export const getSummaryGoals = async (sdsURL: string, authURL: string, sdsScope: string): Promise<MccGoalList> => {
+
+
   const allGoals: MccGoalSummary[] = [];
   const activePatientGoals: MccGoalSummary[] = [];
   const activeClinicalGoals: MccGoalSummary[] = [];
@@ -52,47 +128,59 @@ export const getSummaryGoals = async (): Promise<MccGoalList> => {
   const inactivePatientGoals: MccGoalSummary[] = [];
   const inactiveClinicalGoals: MccGoalSummary[] = [];
   const sdsPatientGoals: MccGoalSummary[] = [];
-
+  const theCurrentClient: Client = await FHIR.oauth2.ready();
+  let sdsClient = await getSupplementalDataClient(theCurrentClient, sdsURL, authURL, sdsScope)
 
   const queryPath = `Goal`;
-  const goalRequest: fhirclient.JsonObject = await client.patient.request(
+
+  let sdsMappedGoals: MccGoalSummary[] = []
+  if (sdsClient) {
+    const sdsGoalRequest: fhirclient.JsonObject = await sdsClient.patient.request(
+      queryPath
+    );
+    const sdsFilterGoals: MccGoal[] = resourcesFromObjectArray(
+      sdsGoalRequest
+    ) as MccGoal[];
+    sdsMappedGoals.push(...sdsFilterGoals.map(transformToMccGoalSummary));
+  }
+
+
+  const goalRequest: fhirclient.JsonObject = await theCurrentClient.patient.request(
     queryPath
   );
 
 
 
-  // const sdsGoalRequest2: fhirclient.JsonObject = await sdsClient.patient.request(
-  //   queryPath
-  // );
-
-  const sdsGoalRequest: fhirclient.JsonObject = await client.patient.request(
-    queryPath
-  );
-
-
-  // goal from problem list item
   const filteredGoals: MccGoal[] = resourcesFromObjectArray(
     goalRequest
   ) as MccGoal[];
 
-  const sdsFilterGoals: MccGoal[] = resourcesFromObjectArray(
-    sdsGoalRequest
-  ) as MccGoal[];
+
 
   const mappedGoals: MccGoalSummary[] = filteredGoals.map(transformToMccGoalSummary);
 
-  const sdsMappedGoals: MccGoalSummary[] = sdsFilterGoals.map(transformToMccGoalSummary);
 
   sdsMappedGoals.forEach(goal => {
-    sdsPatientGoals.push(goal)
+    mappedGoals.push(goal)
   })
 
+
+
+  const thirdPartyStuff = await getSupplementalData(theCurrentClient.state.serverUrl, sdsClient);
+
+
+  if (thirdPartyStuff) {
+    thirdPartyStuff.forEach(goal => {
+      mappedGoals.push(goal)
+    })
+  }
+
   mappedGoals.forEach(goal => {
+
     let activeStatus = ACTIVE_KEYS[goal.lifecycleStatus]
 
     if (isNaN(activeStatus) && !activeStatus) {
       activeStatus = ACTIVE_STATUS.IGNORE;
-      log.info(`getSummaryGoals - Lifecycle status of {} is not known, ignoreing this goal - ${activeStatus}`)
       allGoals.push(goal)
     }
 
@@ -120,6 +208,7 @@ export const getSummaryGoals = async (): Promise<MccGoalList> => {
     }
   })
 
+
   const mccGoalList: MccGoalList = {
     allGoals,
     activeClinicalGoals,
@@ -135,8 +224,6 @@ export const getSummaryGoals = async (): Promise<MccGoalList> => {
     `getSummaryGoals - successful`
   );
 
-  log.debug({ serviceName: 'getSummaryGoals', result: mccGoalList });
-
   return mccGoalList;
 };
 
@@ -146,7 +233,7 @@ export const getSummaryGoals = async (): Promise<MccGoalList> => {
 */
 
 
-export const getGoals = async (): Promise<MccGoal[]> => {
+export const getGoals = async (sdsURL: string, authURL: string, sdsScope: string): Promise<MccGoal[]> => {
   const client = await FHIR.oauth2.ready();
 
   console.error('start saveFHIRAccessData');
@@ -157,7 +244,7 @@ export const getGoals = async (): Promise<MccGoal[]> => {
 
   console.error('end saveFHIRAccessData');
 
-  const sdsClient: Client = await getSupplementalDataClient();
+  const sdsClient: Client = await getSupplementalDataClient(client, sdsURL, authURL, sdsScope);
   console.error(
     `getGoals - ` + JSON.stringify(sdsClient)
   );
@@ -227,3 +314,33 @@ export const createGoal = async (goal: MccGoal): Promise<Resource> => {
   }
 
 }
+function transformToAssessment(transformToAssessment: QuestionnaireResponse): MccAssessment {
+
+  const transformedData: MccAssessment = {
+    title: transformToAssessment._questionnaire.extension[0].valueString,
+    date: displayDate(transformToAssessment.authored),
+    questions: []
+  }
+
+  transformToAssessment.item.forEach(item1 => {
+    transformedData.questions.push(getAnswer(item1));
+    if (item1.item) {
+      transformedData.questions.push(...item1.item.map(getAnswer));
+    }
+
+  });
+
+  return transformedData;
+
+}
+
+
+
+function getAnswer(getAnswer: QuestionnaireResponseItem): MCCAssessmentResponseItem {
+  const response: MCCAssessmentResponseItem = {
+    question: getAnswer.text,
+    answer: getAnswer.answer ? getAnswer.answer[0].valueCoding ? getAnswer.answer[0].valueCoding.display : getAnswer.answer[0].valueBoolean ? JSON.stringify(getAnswer.answer[0].valueBoolean) : JSON.stringify(getAnswer.answer[0]) : ''
+  }
+  return response;
+}
+
