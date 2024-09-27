@@ -96,6 +96,7 @@ export const transformToConditionSummary = async (fhirCondition: MccCondition): 
   const transformedData: MccConditionSummary = {
     code: fhirCondition.code,
     categories: fhirCondition.category[0].coding[0].code,
+    provenance: "This is Provenance",
     history: [
       {
         code: fhirCondition.code,

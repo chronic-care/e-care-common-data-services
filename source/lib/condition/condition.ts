@@ -1,5 +1,5 @@
 /* eslint-disable functional/immutable-data */
-import { Condition } from 'fhir/r4';
+import { Condition, Provenance } from 'fhir/r4';
 import FHIR from 'fhirclient';
 import Client from 'fhirclient/lib/Client';
 import { fhirclient } from 'fhirclient/lib/types';
@@ -118,67 +118,76 @@ export const getSupplementalConditions = async (launchURL: string, sdsClient: Cl
 
 export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsScope: string): Promise<MccConditionList> => {
   const client = await FHIR.oauth2.ready();
-  let sdsClient = await getSupplementalDataClient(client, sdsURL, authURL, sdsScope)
+  let sdsClient = await getSupplementalDataClient(client, sdsURL, authURL, sdsScope);
 
-  const activeConcerns: MccConditionSummary[] = []
-  const activeConditions: MccConditionSummary[] = []
-  const inactiveConcerns: MccConditionSummary[] = []
-  const inactiveConditions: MccConditionSummary[] = []
+  const activeConcerns: MccConditionSummary[] = [];
+  const activeConditions: MccConditionSummary[] = [];
+  const inactiveConcerns: MccConditionSummary[] = [];
+  const inactiveConditions: MccConditionSummary[] = [];
 
-  const queryPath1 = `Condition?category=http%3A%2F%2Fterminology.hl7.org%2FCodeSystem%2Fcondition-category%7Cproblem-list-item`;
-  const queryPath2 = `Condition?category=http%3A%2F%2Fhl7.org%2Ffhir%2Fus%2Fcore%2FCodeSystem%2Fcondition-category%7Chealth-concern`;
-  const conditionRequest1: fhirclient.JsonObject = await client.patient.request(
-    queryPath1
-  );
+  const queryPath1 = `Condition?category=http%3A%2F%2Fterminology.hl7.org%2FCodeSystem%2Fcondition-category%7Cproblem-list-item%&_revinclude=Provenance:target`;
+  const queryPath2 = `Condition?category=http%3A%2F%2Fhl7.org%2Ffhir%2Fus%2Fcore%2FCodeSystem%2Fcondition-category%7Chealth-concern%&_revinclude=Provenance:target`;
 
-  const conditionRequest2: fhirclient.JsonObject = await client.patient.request(
-    queryPath2
-  );
+  const conditionRequest1: fhirclient.JsonObject = await client.patient.request(queryPath1);
+  const conditionRequest2: fhirclient.JsonObject = await client.patient.request(queryPath2);
 
   let sdsfilteredConditions2: MccCondition[] = [];
   if (sdsClient) {
-    const sdsconditionRequest2: fhirclient.JsonObject = await sdsClient.patient.request(
-      queryPath2
-    );
-    sdsfilteredConditions2 = resourcesFrom(
-      sdsconditionRequest2
-    ) as MccCondition[];
+    const sdsconditionRequest2: fhirclient.JsonObject = await sdsClient.patient.request(queryPath2);
+    sdsfilteredConditions2 = resourcesFrom(sdsconditionRequest2) as MccCondition[];
   }
 
+  const resources1 = resourcesFrom(conditionRequest1);
+  const resources2 = resourcesFrom(conditionRequest2);
 
+  const conditions1: MccCondition[] = resources1.filter(r => r.resourceType === 'Condition') as MccCondition[];
+  const conditions2: MccCondition[] = resources2.filter(r => r.resourceType === 'Condition') as MccCondition[];
 
-  // condition from problem list item
-  const filteredConditions1: MccCondition[] = resourcesFrom(
-    conditionRequest1
-  ) as MccCondition[];
+  const provenance1: Provenance[] = resources1.filter(r => r.resourceType === 'Provenance') as Provenance[];
+  const provenance2: Provenance[] = resources2.filter(r => r.resourceType === 'Provenance') as Provenance[];
 
-  // condition from health concern
-  const filteredConditions2: MccCondition[] = resourcesFrom(
-    conditionRequest2
-  ) as MccCondition[];
+  const provenanceMap: Map<string, Provenance[]> = new Map();
 
-  const thirdPartyStuff = await getSupplementalConditions(client.state.serverUrl, sdsClient);
+  // Function to map Provenance to their corresponding Condition
+  const recordProvenance = (provenances: Provenance[]) => {
+    provenances.forEach((prov: Provenance) => {
+      prov.target.forEach((ref: any) => {
+        const resourceId = ref.reference;
+        if (resourceId) {
+          let provList: Provenance[] = provenanceMap.get(resourceId) || [];
+          provList = provList.concat([prov]);
+          provenanceMap.set(resourceId, provList);
+        }
+      });
+    });
+  };
 
-  log.info(
-    `getSummaryConditions - successful` + client.patient.id
+  // Record Provenance for both condition requests
+  recordProvenance(provenance1);
+  recordProvenance(provenance2);
+
+  const filteredConditions = [...conditions1, ...conditions2, ...sdsfilteredConditions2];
+
+  const mappedFilterConditions = await Promise.all(
+    filteredConditions.map(async (condition) => {
+      const transformedCondition = await transformToConditionSummary(condition);
+
+      // Attach the Provenance data from the map to the transformed condition
+      const provenance = provenanceMap.get(`Condition/${condition.id}`) || [];
+      transformedCondition.provenance = provenance;  // Attach Provenance to the condition
+
+      return transformedCondition;
+    })
   );
-  const filteredConditions = [...filteredConditions1, ...filteredConditions2, ...sdsfilteredConditions2, ...thirdPartyStuff]
 
-
-  log.debug({ serviceName: 'getSummaryConditions', result: { filteredConditions } });
-
-
-  const mappedFilterConditions = await Promise.all(filteredConditions.map(transformToConditionSummary))
-
-  mappedFilterConditions.forEach(cond => {
-    const clinicalStatus = cond.clinicalStatus
-    const verificationStatus = cond.verificationStatus
-    const status = `${clinicalStatus}:${verificationStatus}`
+  mappedFilterConditions.forEach((cond) => {
+    const clinicalStatus = cond.clinicalStatus;
+    const verificationStatus = cond.verificationStatus;
+    const status = `${clinicalStatus}:${verificationStatus}`;
     const activeStatus = ACTIVE_KEYS[status];
     const categories = cond.categories;
-    const isProblemOrEncounter = categories.includes("problem-list-item") || categories.includes("encounter-diagnosis");;
-    const isHealthConcern = categories.includes("health-concern");
-
+    const isProblemOrEncounter = categories.includes('problem-list-item') || categories.includes('encounter-diagnosis');
+    const isHealthConcern = categories.includes('health-concern');
 
     if (!isNaN(activeStatus)) {
       switch (activeStatus) {
@@ -186,7 +195,6 @@ export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsS
           if (isHealthConcern) {
             activeConcerns.push(cond);
           }
-
           if (isProblemOrEncounter) {
             activeConditions.push(cond);
           }
@@ -195,33 +203,31 @@ export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsS
           if (isProblemOrEncounter) {
             inactiveConditions.push(cond);
           }
-
           if (isHealthConcern) {
             inactiveConcerns.push(cond);
           }
           break;
         case ACTIVE_STATUS.IGNORE:
-          log.info("Ignoring condition " + " status: " + activeStatus);
+          log.info('Ignoring condition ' + ' status: ' + activeStatus);
           break;
         default:
-          log.info("Undefined State, Ignoring condition " + " status: " + activeStatus);
+          log.info('Undefined State, Ignoring condition ' + ' status: ' + activeStatus);
           break;
       }
     }
-  })
-
+  });
 
   const mccConditionList: MccConditionList = {
     activeConcerns,
     activeConditions,
     inactiveConcerns,
     inactiveConditions
-  }
-
-
+  };
 
   return mccConditionList;
 };
+
+
 
 export const getConditions = async (): Promise<MccCondition[]> => {
   const client = await FHIR.oauth2.ready();
