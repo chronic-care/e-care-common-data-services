@@ -330,6 +330,7 @@ export type MccPatientSummary = {
 export type MccConditionSummary = {
   code: CodeableConcept;
   categories: string;
+  provenance: String;
   history: {
     code: CodeableConcept;
     onset: string;
@@ -396,3 +397,4 @@ export type MccAssessment = {
   questions?: Array<MCCAssessmentResponseItem>,
   subsections?: Array<MccAssessment>
 }
+

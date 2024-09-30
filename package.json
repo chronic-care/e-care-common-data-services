@@ -43,10 +43,11 @@
     "cql-exec-fhir": "^2.0.2",
     "cql-execution": "^2.4.2",
     "dayjs": "^1.11.5",
+    "e-care-common-data-services": "file:",
     "fhirclient": "^2.5.2",
     "http": "^0.0.1-security",
-    "loglevel": "^1.8.0",
-    "localforage": "^1.10.0"
+    "localforage": "^1.10.0",
+    "loglevel": "^1.8.0"
   },
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
@@ -62,14 +63,14 @@
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-functional": "^3.0.2",
     "eslint-plugin-import": "^2.22.0",
+    "localforage": "^1.10.0",
     "npm-run-all": "^4.1.5",
     "open-cli": "^7.0.1",
     "prettier": "^2.1.1",
     "standard-version": "^9.0.0",
     "ts-node": "^9.0.0",
     "typedoc": "^0.23.15",
-    "typescript": "^4.0.2",
-    "localforage": "^1.10.0"
+    "typescript": "^4.0.2"
   },
   "files": [
     "build/main",
