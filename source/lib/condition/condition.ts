@@ -115,8 +115,22 @@ export const getSupplementalConditions = async (launchURL: string, sdsClient: Cl
   return allThirdPartyMappedConditions;
 };
 
+export function displayTransmitter(prov: Provenance | undefined): string | undefined {
+  var display: string | undefined
+
+  prov?.agent?.forEach(agent => {
+    agent.type?.coding?.forEach(coding => {
+      if (coding.code === 'transmitter') {
+        display = agent.who?.display
+      }
+    })
+  })
+
+  return display
+}
 
 export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsScope: string): Promise<MccConditionList> => {
+
   const client = await FHIR.oauth2.ready();
   let sdsClient = await getSupplementalDataClient(client, sdsURL, authURL, sdsScope);
 
@@ -125,8 +139,8 @@ export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsS
   const inactiveConcerns: MccConditionSummary[] = [];
   const inactiveConditions: MccConditionSummary[] = [];
 
-  const queryPath1 = `Condition?category=http%3A%2F%2Fterminology.hl7.org%2FCodeSystem%2Fcondition-category%7Cproblem-list-item%&_revinclude=Provenance:target`;
-  const queryPath2 = `Condition?category=http%3A%2F%2Fhl7.org%2Ffhir%2Fus%2Fcore%2FCodeSystem%2Fcondition-category%7Chealth-concern%&_revinclude=Provenance:target`;
+  const queryPath1 = `Condition?category=http%3A%2F%2Fterminology.hl7.org%2FCodeSystem%2Fcondition-category%7Cproblem-list-item&_revinclude=Provenance:target`;
+  const queryPath2 = `Condition?category=http%3A%2F%2Fhl7.org%2Ffhir%2Fus%2Fcore%2FCodeSystem%2Fcondition-category%7Chealth-concern&_revinclude=Provenance:target`;
 
   const conditionRequest1: fhirclient.JsonObject = await client.patient.request(queryPath1);
   const conditionRequest2: fhirclient.JsonObject = await client.patient.request(queryPath2);
@@ -146,7 +160,7 @@ export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsS
   const provenance1: Provenance[] = resources1.filter(r => r.resourceType === 'Provenance') as Provenance[];
   const provenance2: Provenance[] = resources2.filter(r => r.resourceType === 'Provenance') as Provenance[];
 
-  const provenanceMap: Map<string, Provenance[]> = new Map();
+  const provenanceMap: Map<string, Provenance> = new Map();
 
   // Function to map Provenance to their corresponding Condition
   const recordProvenance = (provenances: Provenance[]) => {
@@ -154,9 +168,9 @@ export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsS
       prov.target.forEach((ref: any) => {
         const resourceId = ref.reference;
         if (resourceId) {
-          let provList: Provenance[] = provenanceMap.get(resourceId) || [];
-          provList = provList.concat([prov]);
-          provenanceMap.set(resourceId, provList);
+          // let provList: Provenance[] = provenanceMap.get(resourceId) || [];
+          // provList = provList.concat([prov]);
+          provenanceMap.set(resourceId, prov);
         }
       });
     });
@@ -173,8 +187,8 @@ export const getSummaryConditions = async (sdsURL: string, authURL: string, sdsS
       const transformedCondition = await transformToConditionSummary(condition);
 
       // Attach the Provenance data from the map to the transformed condition
-      const provenance = provenanceMap.get(`Condition/${condition.id}`) || [];
-      transformedCondition.provenance = provenance;  // Attach Provenance to the condition
+      const provenance: Provenance = provenanceMap.get(`Condition/${condition.id}`);
+      transformedCondition.provenance = displayTransmitter(provenance);
 
       return transformedCondition;
     })
