@@ -22,7 +22,7 @@ const getQuestionnaireCodes = async (code: string): Promise<string> => {
   const client = await FHIR.oauth2.ready();
 
   log.info(`getQuestionnaireCodes - start with code - ${code}`);
-  const queryPath = `Questionnaire?code=${code}&_summary=true`;
+  const queryPath = `Questionnaire?code=${code}`;
   const questionnaireRequest: fhirclient.JsonArray = await client.request(
     queryPath,
     fhirOptions

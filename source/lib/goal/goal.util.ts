@@ -316,10 +316,10 @@ export const getConceptDisplayString = (code: CodeableConcept): string => {
 };
 
 export const transformToMccGoalSummary = (goal: MccGoal): MccGoalSummary => {
-  const priority = goal.priority?.coding[0]?.display || '';
+  const priority = getConceptDisplayString(goal.priority)
   const expressedByType = goal.expressedBy?.reference?.split('/')[0] || '';
-  const description = goal.description?.text || '';
-  const achievementText = goal.achievementStatus?.text || '';
+  const description = getConceptDisplayString(goal.description);
+  const achievementText = getConceptDisplayString(goal.achievementStatus);
   const lifecycleStatus = goal.lifecycleStatus || '';
   const startDateText = goal.startDate ? displayDate(goal.startDate) : '';
   const targetDateText = goal.target?.[0]?.dueDate ? displayDate(goal.target[0].dueDate) : undefined;
